@@ -17,7 +17,7 @@ defmodule StarterAppWeb.HealthController do
   def index(conn, _params) do
     json(conn, %{
       status: "ok",
-      service: "sertantai-controls",
+      service: "starter-app",
       timestamp: DateTime.utc_now() |> DateTime.to_iso8601()
     })
   end
@@ -30,7 +30,7 @@ defmodule StarterAppWeb.HealthController do
   def show(conn, _params) do
     health_status = %{
       status: "healthy",
-      service: "sertantai-controls",
+      service: "starter-app",
       version: Application.spec(:starter_app, :vsn) |> to_string(),
       timestamp: DateTime.utc_now() |> DateTime.to_iso8601(),
       checks: %{
