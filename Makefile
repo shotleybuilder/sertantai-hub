@@ -1,4 +1,4 @@
-.PHONY: help setup dev stop clean migrate rollback seed test test-frontend test-backend lint format build
+.PHONY: help setup dev stop migrate rollback seed test test-frontend test-backend lint format build
 
 # Default target
 help:
@@ -10,7 +10,6 @@ help:
 	@echo "  make dev-thick      - Start full micro-services stack"
 	@echo "  make stop           - Stop hub servers"
 	@echo "  make stop-all       - Stop hub + all micro-services"
-	@echo "  make clean          - Clean build artifacts, deps, and DB volumes (DESTRUCTIVE)"
 	@echo ""
 	@echo "Database:"
 	@echo "  make migrate        - Run database migrations (Ash)"
@@ -58,17 +57,6 @@ stop:
 # Stop all services including micro-services
 stop-all:
 	./scripts/development/sert-hub-stop --docker --thick
-
-# Clean build artifacts and dependencies (WARNING: destroys DB volumes!)
-clean:
-	@echo "WARNING: This will destroy Docker volumes including the dev database!"
-	@echo "Press Ctrl+C within 5 seconds to cancel..."
-	@sleep 5
-	@echo "Cleaning build artifacts..."
-	cd frontend && rm -rf node_modules .svelte-kit build dist
-	cd backend && rm -rf _build deps
-	docker compose -f docker-compose.dev.yml down -v
-	@echo "Clean complete!"
 
 # Run database migrations (use Ash generators, not plain Ecto)
 migrate:

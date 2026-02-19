@@ -26,7 +26,24 @@
       "WebFetch(domain:elixirforum.com)",
       "WebSearch"
     ],
-    "deny": []
+    "deny": [
+      "Bash(docker compose*down*-v*)",
+      "Bash(docker-compose*down*-v*)",
+      "Bash(docker volume rm*)",
+      "Bash(docker volume prune*)",
+      "Bash(docker system prune*)",
+      "Bash(docker rm*)",
+      "Bash(docker rmi*)",
+      "Bash(make clean*)",
+      "mcp__acp__Bash(docker compose*down*-v*)",
+      "mcp__acp__Bash(docker-compose*down*-v*)",
+      "mcp__acp__Bash(docker volume rm*)",
+      "mcp__acp__Bash(docker volume prune*)",
+      "mcp__acp__Bash(docker system prune*)",
+      "mcp__acp__Bash(docker rm*)",
+      "mcp__acp__Bash(docker rmi*)",
+      "mcp__acp__Bash(make clean*)"
+    ]
   },
   "enabledMcpjsonServers": [
     "tidewave"
