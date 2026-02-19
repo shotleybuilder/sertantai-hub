@@ -36,7 +36,12 @@ export const authStore = writable<AuthState>(initialState);
 /**
  * Set auth state from a token + auth service response.
  */
-function setAuth(token: string, user: { id: string; email: string }, organizationId: string, role: string) {
+function setAuth(
+	token: string,
+	user: { id: string; email: string },
+	organizationId: string,
+	role: string
+) {
 	localStorage.setItem(STORAGE_KEY, token);
 	authStore.set({
 		token,
@@ -55,7 +60,10 @@ function clearAuth() {
 /**
  * Register a new user. Auth service auto-creates an organization.
  */
-export async function register(email: string, password: string): Promise<{ ok: boolean; error?: string }> {
+export async function register(
+	email: string,
+	password: string
+): Promise<{ ok: boolean; error?: string }> {
 	try {
 		const response = await fetch(`${API_URL}/api/auth/register`, {
 			method: 'POST',
@@ -69,7 +77,12 @@ export async function register(email: string, password: string): Promise<{ ok: b
 			return { ok: false, error: data.error || data.message || 'Registration failed' };
 		}
 
-		setAuth(data.token, { id: data.user.id, email: data.user.email }, data.organization_id, data.role);
+		setAuth(
+			data.token,
+			{ id: data.user.id, email: data.user.email },
+			data.organization_id,
+			data.role
+		);
 		return { ok: true };
 	} catch (e) {
 		return { ok: false, error: e instanceof Error ? e.message : 'Network error' };
@@ -79,7 +92,10 @@ export async function register(email: string, password: string): Promise<{ ok: b
 /**
  * Login with email and password.
  */
-export async function login(email: string, password: string): Promise<{ ok: boolean; error?: string }> {
+export async function login(
+	email: string,
+	password: string
+): Promise<{ ok: boolean; error?: string }> {
 	try {
 		const response = await fetch(`${API_URL}/api/auth/login`, {
 			method: 'POST',
@@ -93,7 +109,12 @@ export async function login(email: string, password: string): Promise<{ ok: bool
 			return { ok: false, error: data.error || data.message || 'Login failed' };
 		}
 
-		setAuth(data.token, { id: data.user.id, email: data.user.email }, data.organization_id, data.role);
+		setAuth(
+			data.token,
+			{ id: data.user.id, email: data.user.email },
+			data.organization_id,
+			data.role
+		);
 		return { ok: true };
 	} catch (e) {
 		return { ok: false, error: e instanceof Error ? e.message : 'Network error' };
