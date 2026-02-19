@@ -29,7 +29,7 @@ BLUE='\033[0;34m'
 NC='\033[0m' # No Color
 
 # Image configuration (update with your GitHub org/user)
-IMAGE_NAME="ghcr.io/YOUR_GITHUB_ORG/sertantai-hub-frontend"
+IMAGE_NAME="ghcr.io/shotleybuilder/sertantai-hub-frontend"
 IMAGE_TAG="${1:-latest}"
 FULL_IMAGE="${IMAGE_NAME}:${IMAGE_TAG}"
 

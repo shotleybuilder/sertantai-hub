@@ -120,7 +120,7 @@ echo $GITHUB_PAT | docker login ghcr.io -u YOUR_USERNAME --password-stdin
 **Configuration:**
 Update `IMAGE_NAME` in script with your GitHub org/user:
 ```bash
-IMAGE_NAME="ghcr.io/YOUR_GITHUB_ORG/sertantai-hub-backend"
+IMAGE_NAME="ghcr.io/shotleybuilder/sertantai-hub-backend"
 ```
 
 ---
@@ -140,7 +140,7 @@ Push the frontend image to GitHub Container Registry.
 **Configuration:**
 Update `IMAGE_NAME` in script with your GitHub org/user:
 ```bash
-IMAGE_NAME="ghcr.io/YOUR_GITHUB_ORG/sertantai-hub-frontend"
+IMAGE_NAME="ghcr.io/shotleybuilder/sertantai-hub-frontend"
 ```
 
 ---
@@ -281,15 +281,15 @@ Before using the scripts, update the `IMAGE_NAME` variable in each script:
 
 **In build-backend.sh and push-backend.sh:**
 ```bash
-IMAGE_NAME="ghcr.io/YOUR_GITHUB_ORG/sertantai-hub-backend"
+IMAGE_NAME="ghcr.io/shotleybuilder/sertantai-hub-backend"
 ```
 
 **In build-frontend.sh and push-frontend.sh:**
 ```bash
-IMAGE_NAME="ghcr.io/YOUR_GITHUB_ORG/sertantai-hub-frontend"
+IMAGE_NAME="ghcr.io/shotleybuilder/sertantai-hub-frontend"
 ```
 
-Replace `YOUR_GITHUB_ORG` with your GitHub organization or username.
+Replace `shotleybuilder` with your GitHub organization or username.
 
 ---
 

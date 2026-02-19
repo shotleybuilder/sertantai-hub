@@ -27,4 +27,11 @@
 - scripts/development/dev-start (replaced with wrapper)
 - scripts/development/dev-stop (replaced with wrapper)
 - scripts/development/README.md (rewritten)
-- Makefile (fixed ports, project name, added dev/dev-thick/stop-all targets)
+- Makefile (fixed ports, project name, removed destructive clean target)
+- .claude/settings.local.json + example (deny rules for destructive Docker cmds)
+- backend/config/dev.exs + test.exs (added port: 5435)
+- backend/priv/repo/migrations/ (initial Ash migrations)
+- backend/test/.../auth_proxy_controller_test.exs (fixed for auth-up/down)
+- ~/.bashrc (added sert-hub-start/stop/restart aliases)
+
+**Ended**: 2026-02-19
