@@ -1,10 +1,10 @@
-# Usage Rules for Starter App
+# Usage Rules for SertantAI Hub
 
 This file defines usage rules for this application. These rules are enforced during development via the `usage_rules` package.
 
 See [usage_rules documentation](https://hexdocs.pm/usage_rules/readme.html) for more information.
 
-## Package: StarterApp
+## Package: SertantaiHub
 
 ### Core Principles
 
@@ -20,14 +20,14 @@ See [usage_rules documentation](https://hexdocs.pm/usage_rules/readme.html) for 
 
 ```elixir
 # ✓ GOOD: Includes organization_id, uses Ash Resource, proper timestamps
-defmodule StarterApp.YourDomain.YourResource do
+defmodule SertantaiHub.YourDomain.YourResource do
   use Ash.Resource,
-    domain: StarterApp.Api,
+    domain: SertantaiHub.Api,
     data_layer: AshPostgres.DataLayer
 
   postgres do
     table "your_resources"
-    repo StarterApp.Repo
+    repo SertantaiHub.Repo
   end
 
   attributes do
@@ -39,7 +39,7 @@ defmodule StarterApp.YourDomain.YourResource do
   end
 
   relationships do
-    belongs_to :organization, StarterApp.Auth.Organization
+    belongs_to :organization, SertantaiHub.Auth.Organization
   end
 
   actions do
@@ -58,7 +58,7 @@ end
 
 ```elixir
 # ✗ BAD: Missing organization_id, no timestamps, plain Ecto schema
-defmodule StarterApp.YourDomain.YourResource do
+defmodule SertantaiHub.YourDomain.YourResource do
   use Ecto.Schema
 
   schema "your_resources" do
@@ -114,8 +114,8 @@ All resources must have:
 
 ```elixir
 # ✓ GOOD: Comprehensive test coverage
-defmodule StarterApp.YourDomain.YourResourceTest do
-  use StarterApp.DataCase
+defmodule SertantaiHub.YourDomain.YourResourceTest do
+  use SertantaiHub.DataCase
 
   describe "create/1" do
     test "creates resource with valid data" do
@@ -258,7 +258,7 @@ syncCollection('your_resources', organizationId)
 When using this template for your project:
 
 1. Update this file with your project-specific rules
-2. Replace `StarterApp` namespace with your app name
+2. Replace `SertantaiHub` namespace with your app name
 3. Add domain-specific validation rules
 4. Document your authorization patterns
 5. Add any custom macros or patterns your team uses

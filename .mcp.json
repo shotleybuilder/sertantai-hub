@@ -3,9 +3,7 @@
     "tidewave": {
       "type": "stdio",
       "command": "/home/jason/mcp-proxy",
-      "args": [
-        "http://localhost:4000/tidewave/mcp"
-      ],
+      "args": ["http://localhost:4006/tidewave/mcp"],
       "env": {}
     }
   }

@@ -56,7 +56,7 @@ ENV ERL_MAX_PORTS=8192 \
 WORKDIR /app
 
 # Copy release from builder
-COPY --from=builder /app/_build/prod/rel/starter_app ./
+COPY --from=builder /app/_build/prod/rel/sertantai_hub ./
 
 # Create non-root user
 RUN addgroup -g 1000 starter && \
@@ -72,4 +72,4 @@ HEALTHCHECK --interval=30s --timeout=3s --start-period=10s --retries=3 \
   CMD wget --no-verbose --tries=1 --spider http://localhost:4000/health || exit 1
 
 # Start script: run migrations then start server
-CMD ["/bin/bash", "-c", "/app/bin/starter_app eval 'StarterApp.Release.migrate()' && /app/bin/starter_app start"]
+CMD ["/bin/bash", "-c", "/app/bin/sertantai_hub eval 'SertantaiHub.Release.migrate()' && /app/bin/sertantai_hub start"]

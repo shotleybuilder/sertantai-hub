@@ -7,20 +7,21 @@
 # General application configuration
 import Config
 
-config :starter_app,
-  ecto_repos: [StarterApp.Repo],
-  ash_domains: [StarterApp.Api],
-  generators: [timestamp_type: :utc_datetime]
+config :sertantai_hub,
+  ecto_repos: [SertantaiHub.Repo],
+  ash_domains: [SertantaiHub.Api],
+  generators: [timestamp_type: :utc_datetime],
+  auth_service_url: System.get_env("AUTH_SERVICE_URL") || "http://localhost:4000"
 
 # Configures the endpoint
-config :starter_app, StarterAppWeb.Endpoint,
+config :sertantai_hub, SertantaiHubWeb.Endpoint,
   url: [host: "localhost"],
   adapter: Bandit.PhoenixAdapter,
   render_errors: [
-    formats: [json: StarterAppWeb.ErrorJSON],
+    formats: [json: SertantaiHubWeb.ErrorJSON],
     layout: false
   ],
-  pubsub_server: StarterApp.PubSub,
+  pubsub_server: SertantaiHub.PubSub,
   live_view: [signing_salt: "xjXQzhFq"]
 
 # Configures Elixir's Logger

@@ -1,6 +1,6 @@
-defmodule StarterApp.Api do
+defmodule SertantaiHub.Api do
   @moduledoc """
-  The main Ash Domain for the Starter App.
+  The main Ash Domain for the SertantAI Hub.
 
   This domain contains the base Auth resources for multi-tenancy:
   - User: User accounts (can be synced from external auth service)
@@ -13,8 +13,8 @@ defmodule StarterApp.Api do
 
   resources do
     # Auth resources (for multi-tenancy)
-    resource(StarterApp.Auth.User)
-    resource(StarterApp.Auth.Organization)
+    resource(SertantaiHub.Auth.User)
+    resource(SertantaiHub.Auth.Organization)
 
     # Add your application resources here
   end

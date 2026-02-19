@@ -1,4 +1,4 @@
--- Initialize Sertantai Controls database
+-- Initialize SertantAI Hub database
 -- This script runs once on first PostgreSQL container startup
 
 -- Enable required extensions

@@ -1,6 +1,6 @@
-# Starter App Deployment Scripts
+# SertantAI Hub Deployment Scripts
 
-Automated deployment scripts for building and pushing the Starter App backend and frontend Docker images to GitHub Container Registry.
+Automated deployment scripts for building and pushing the SertantAI Hub backend and frontend Docker images to GitHub Container Registry.
 
 ## Quick Start
 
@@ -60,7 +60,7 @@ Build the production Docker image for the Phoenix/Ash backend.
 - Validates `backend/Dockerfile` exists
 - Checks Docker is running
 - Builds multi-stage image (builder + runner)
-- Includes migrations via `StarterApp.Release.migrate/0`
+- Includes migrations via `SertantaiHub.Release.migrate/0`
 - Shows image size and ID
 
 **Dockerfile features:**
@@ -120,7 +120,7 @@ echo $GITHUB_PAT | docker login ghcr.io -u YOUR_USERNAME --password-stdin
 **Configuration:**
 Update `IMAGE_NAME` in script with your GitHub org/user:
 ```bash
-IMAGE_NAME="ghcr.io/YOUR_GITHUB_ORG/starter-app-backend"
+IMAGE_NAME="ghcr.io/YOUR_GITHUB_ORG/sertantai-hub-backend"
 ```
 
 ---
@@ -140,7 +140,7 @@ Push the frontend image to GitHub Container Registry.
 **Configuration:**
 Update `IMAGE_NAME` in script with your GitHub org/user:
 ```bash
-IMAGE_NAME="ghcr.io/YOUR_GITHUB_ORG/starter-app-frontend"
+IMAGE_NAME="ghcr.io/YOUR_GITHUB_ORG/sertantai-hub-frontend"
 ```
 
 ---
@@ -207,18 +207,18 @@ This template follows the **centralized infrastructure pattern** where PostgreSQ
 2. **Update infrastructure docker-compose.yml:**
    ```yaml
    services:
-     starter-app-backend:
-       image: ghcr.io/YOUR_ORG/starter-app-backend:latest
+     sertantai-hub-backend:
+       image: ghcr.io/YOUR_ORG/sertantai-hub-backend:latest
        environment:
-         DATABASE_URL: postgresql://postgres:password@postgres:5432/starter_app_prod
+         DATABASE_URL: postgresql://postgres:password@postgres:5432/sertantai_hub_prod
          SECRET_KEY_BASE: ${SECRET_KEY_BASE}
          PHX_HOST: api.yourdomain.com
        depends_on:
          - postgres
          - redis
 
-     starter-app-frontend:
-       image: ghcr.io/YOUR_ORG/starter-app-frontend:latest
+     sertantai-hub-frontend:
+       image: ghcr.io/YOUR_ORG/sertantai-hub-frontend:latest
        environment:
          PUBLIC_API_URL: https://api.yourdomain.com
          PUBLIC_ELECTRIC_URL: https://electric.yourdomain.com
@@ -228,9 +228,9 @@ This template follows the **centralized infrastructure pattern** where PostgreSQ
    ```bash
    ssh your-server
    cd ~/infrastructure/docker
-   docker compose pull starter-app-backend starter-app-frontend
-   docker compose up -d starter-app-backend starter-app-frontend
-   docker compose logs -f starter-app-backend
+   docker compose pull sertantai-hub-backend sertantai-hub-frontend
+   docker compose up -d sertantai-hub-backend sertantai-hub-frontend
+   docker compose logs -f sertantai-hub-backend
    ```
 
 4. **Configure Nginx reverse proxy:**
@@ -240,7 +240,7 @@ This template follows the **centralized infrastructure pattern** where PostgreSQ
        listen 443 ssl;
        server_name api.yourdomain.com;
        location / {
-           proxy_pass http://starter-app-backend:4000;
+           proxy_pass http://sertantai-hub-backend:4000;
        }
    }
 
@@ -249,7 +249,7 @@ This template follows the **centralized infrastructure pattern** where PostgreSQ
        listen 443 ssl;
        server_name app.yourdomain.com;
        location / {
-           proxy_pass http://starter-app-frontend:3000;
+           proxy_pass http://sertantai-hub-frontend:3000;
        }
    }
    ```
@@ -258,7 +258,7 @@ This template follows the **centralized infrastructure pattern** where PostgreSQ
 
 **Backend (.env):**
 ```bash
-DATABASE_URL=postgresql://postgres:password@postgres:5432/starter_app_prod
+DATABASE_URL=postgresql://postgres:password@postgres:5432/sertantai_hub_prod
 SECRET_KEY_BASE=your-secret-key-base-at-least-64-chars
 PHX_HOST=api.yourdomain.com
 FRONTEND_URL=https://app.yourdomain.com
@@ -281,12 +281,12 @@ Before using the scripts, update the `IMAGE_NAME` variable in each script:
 
 **In build-backend.sh and push-backend.sh:**
 ```bash
-IMAGE_NAME="ghcr.io/YOUR_GITHUB_ORG/starter-app-backend"
+IMAGE_NAME="ghcr.io/YOUR_GITHUB_ORG/sertantai-hub-backend"
 ```
 
 **In build-frontend.sh and push-frontend.sh:**
 ```bash
-IMAGE_NAME="ghcr.io/YOUR_GITHUB_ORG/starter-app-frontend"
+IMAGE_NAME="ghcr.io/YOUR_GITHUB_ORG/sertantai-hub-frontend"
 ```
 
 Replace `YOUR_GITHUB_ORG` with your GitHub organization or username.
@@ -336,7 +336,7 @@ docker build --no-cache -f backend/Dockerfile backend/
 echo $GITHUB_PAT | docker login ghcr.io -u YOUR_USERNAME --password-stdin
 
 # Verify images exist
-docker images | grep starter-app
+docker images | grep sertantai-hub
 
 # Check GHCR permissions
 # Ensure your GitHub PAT has write:packages scope
@@ -346,7 +346,7 @@ docker images | grep starter-app
 
 ```bash
 # Check logs
-docker logs starter-app-backend
+docker logs sertantai-hub-backend
 
 # Common issues:
 # - DATABASE_URL not set or incorrect
@@ -359,7 +359,7 @@ docker logs starter-app-backend
 
 ```bash
 # Check logs
-docker logs starter-app-frontend
+docker logs sertantai-hub-frontend
 
 # Common issues:
 # - Build artifacts missing (rebuild with --no-cache)
@@ -373,7 +373,7 @@ docker logs starter-app-frontend
 
 **Backend:**
 - Endpoint: `http://localhost:4006/health`
-- Expected: `{"status": "ok", "service": "starter-app", "timestamp": "..."}`
+- Expected: `{"status": "ok", "service": "sertantai-hub", "timestamp": "..."}`
 - Detailed: `http://localhost:4006/health/detailed` (includes database check)
 
 **Frontend:**

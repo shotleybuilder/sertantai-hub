@@ -1,4 +1,4 @@
-defmodule StarterApp.Application do
+defmodule SertantaiHub.Application do
   # See https://hexdocs.pm/elixir/Application.html
   # for more information on OTP Applications
   @moduledoc false
@@ -8,20 +8,19 @@ defmodule StarterApp.Application do
   @impl true
   def start(_type, _args) do
     children = [
-      StarterAppWeb.Telemetry,
-      StarterApp.Repo,
-      {DNSCluster,
-       query: Application.get_env(:starter_app, :dns_cluster_query) || :ignore},
-      {Phoenix.PubSub, name: StarterApp.PubSub},
-      # Start a worker by calling: StarterApp.Worker.start_link(arg)
-      # {StarterApp.Worker, arg},
+      SertantaiHubWeb.Telemetry,
+      SertantaiHub.Repo,
+      {DNSCluster, query: Application.get_env(:sertantai_hub, :dns_cluster_query) || :ignore},
+      {Phoenix.PubSub, name: SertantaiHub.PubSub},
+      # Start a worker by calling: SertantaiHub.Worker.start_link(arg)
+      # {SertantaiHub.Worker, arg},
       # Start to serve requests, typically the last entry
-      StarterAppWeb.Endpoint
+      SertantaiHubWeb.Endpoint
     ]
 
     # See https://hexdocs.pm/elixir/Supervisor.html
     # for other strategies and supported options
-    opts = [strategy: :one_for_one, name: StarterApp.Supervisor]
+    opts = [strategy: :one_for_one, name: SertantaiHub.Supervisor]
     Supervisor.start_link(children, opts)
   end
 
@@ -29,7 +28,7 @@ defmodule StarterApp.Application do
   # whenever the application is updated.
   @impl true
   def config_change(changed, _new, removed) do
-    StarterAppWeb.Endpoint.config_change(changed, removed)
+    SertantaiHubWeb.Endpoint.config_change(changed, removed)
     :ok
   end
 end

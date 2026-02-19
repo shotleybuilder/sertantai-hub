@@ -1,5 +1,5 @@
-defmodule StarterAppWeb.HelloController do
-  use StarterAppWeb, :controller
+defmodule SertantaiHubWeb.HelloController do
+  use SertantaiHubWeb, :controller
 
   @doc """
   Simple hello endpoint to test API connectivity.
@@ -8,7 +8,7 @@ defmodule StarterAppWeb.HelloController do
   def index(conn, _params) do
     json(conn, %{
       message: "Hello from Sertantai Controls API!",
-      environment: Application.get_env(:starter_app, :environment, :dev),
+      environment: Application.get_env(:sertantai_hub, :environment, :dev),
       timestamp: DateTime.utc_now() |> DateTime.to_iso8601()
     })
   end

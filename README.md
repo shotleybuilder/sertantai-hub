@@ -126,16 +126,16 @@ cd frontend && npm run dev                       # Frontend on :5173
 sertantai-hub/
 ├── backend/                       # Phoenix + Ash backend
 │   ├── lib/
-│   │   ├── starter_app/
+│   │   ├── sertantai_hub/
 │   │   │   ├── auth/              # User & Organization resources
 │   │   │   ├── api.ex             # Ash Domain
 │   │   │   ├── repo.ex            # Ecto Repo
 │   │   │   └── application.ex     # OTP Application
-│   │   ├── starter_app_web/
+│   │   ├── sertantai_hub_web/
 │   │   │   ├── controllers/
 │   │   │   ├── endpoint.ex
 │   │   │   └── router.ex
-│   │   └── starter_app.ex
+│   │   └── sertantai_hub.ex
 │   ├── priv/
 │   │   └── repo/
 │   │       ├── migrations/        # Ash-generated migrations
@@ -194,7 +194,7 @@ npm run check            # TypeScript check
 
 **Backend** (`backend/.env`):
 ```bash
-DATABASE_URL=postgresql://postgres:postgres@localhost:5435/starter_app_dev
+DATABASE_URL=postgresql://postgres:postgres@localhost:5435/sertantai_hub_dev
 SECRET_KEY_BASE=your-secret-key-here
 FRONTEND_URL=http://localhost:5173
 ```
@@ -280,7 +280,7 @@ This template follows a **centralized infrastructure pattern** where PostgreSQL,
 **Backend:**
 ```bash
 curl http://localhost:4006/health
-# {"status": "ok", "service": "starter-app", "timestamp": "..."}
+# {"status": "ok", "service": "sertantai-hub", "timestamp": "..."}
 
 curl http://localhost:4006/health/detailed
 # Includes database connectivity check

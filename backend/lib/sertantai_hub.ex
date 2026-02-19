@@ -1,6 +1,6 @@
-defmodule StarterApp do
+defmodule SertantaiHub do
   @moduledoc """
-  StarterApp keeps the contexts that define your domain
+  SertantaiHub keeps the contexts that define your domain
   and business logic.
 
   Contexts are also responsible for managing your data, regardless

@@ -96,13 +96,13 @@ Svelte Components (reactive UI)
 **CRITICAL**: All domain resources MUST include `organization_id` for data isolation.
 
 **Base Resources** (already included):
-- `StarterApp.Auth.User` - User accounts (backend/lib/starter_app/auth/user.ex)
-- `StarterApp.Auth.Organization` - Tenant boundaries (backend/lib/starter_app/auth/organization.ex)
+- `SertantaiHub.Auth.User` - User accounts (backend/lib/sertantai_hub/auth/user.ex)
+- `SertantaiHub.Auth.Organization` - Tenant boundaries (backend/lib/sertantai_hub/auth/organization.ex)
 
 Both resources are **read-only by default**. You can modify them to support local auth or sync from external auth service.
 
 **Your Domain Resources** (you add these):
-- Create in `backend/lib/starter_app/<your_domain>/`
+- Create in `backend/lib/sertantai_hub/<your_domain>/`
 - Must include `organization_id`, `inserted_at`, `updated_at`
 - Use UUID primary keys
 - Define explicit Ash actions (avoid `:all` in defaults)
@@ -113,23 +113,23 @@ See `usage-rules.md` for detailed requirements and `docs/BLUEPRINT.md` for compl
 ## Project Structure
 
 ```
-starter-app/
+sertantai-hub/
 ├── backend/                          # Elixir/Phoenix/Ash backend
 │   ├── lib/
-│   │   ├── starter_app/              # Domain layer
+│   │   ├── sertantai_hub/              # Domain layer
 │   │   │   ├── auth/                 # Auth resources (User, Organization)
 │   │   │   │   ├── user.ex
 │   │   │   │   └── organization.ex
 │   │   │   ├── api.ex                # Main Ash Domain - register resources here
 │   │   │   ├── repo.ex               # Ecto Repo
 │   │   │   └── application.ex        # OTP Application
-│   │   ├── starter_app_web/          # Web layer (Phoenix)
+│   │   ├── sertantai_hub_web/          # Web layer (Phoenix)
 │   │   │   ├── controllers/
 │   │   │   │   ├── health_controller.ex
 │   │   │   │   └── hello_controller.ex
 │   │   │   ├── endpoint.ex           # Includes Tidewave MCP plug
 │   │   │   └── router.ex
-│   │   └── starter_app.ex
+│   │   └── sertantai_hub.ex
 │   ├── priv/
 │   │   └── repo/
 │   │       ├── migrations/           # Ash-generated migrations
@@ -180,20 +180,20 @@ starter-app/
 Ash is the **primary way to model domain entities**. Do NOT use plain Ecto schemas.
 
 **Key Files**:
-- `backend/lib/starter_app/api.ex` - Main domain, register all resources here
-- `backend/lib/starter_app/auth/user.ex` - Example resource
-- `backend/lib/starter_app/auth/organization.ex` - Example resource
+- `backend/lib/sertantai_hub/api.ex` - Main domain, register all resources here
+- `backend/lib/sertantai_hub/auth/user.ex` - Example resource
+- `backend/lib/sertantai_hub/auth/organization.ex` - Example resource
 
 **Ash Resource Anatomy**:
 ```elixir
-defmodule StarterApp.YourDomain.YourResource do
+defmodule SertantaiHub.YourDomain.YourResource do
   use Ash.Resource,
-    domain: StarterApp.Api,
+    domain: SertantaiHub.Api,
     data_layer: AshPostgres.DataLayer
 
   postgres do
     table "your_resources"
-    repo StarterApp.Repo
+    repo SertantaiHub.Repo
   end
 
   attributes do
@@ -205,7 +205,7 @@ defmodule StarterApp.YourDomain.YourResource do
   end
 
   relationships do
-    belongs_to :organization, StarterApp.Auth.Organization
+    belongs_to :organization, SertantaiHub.Auth.Organization
   end
 
   actions do
@@ -298,7 +298,7 @@ stream.subscribe((messages) => {
 **What it is**: Model Context Protocol server for AI assistant integration with Phoenix apps.
 
 **Location**:
-- Plug: `backend/lib/starter_app_web/endpoint.ex:30-32`
+- Plug: `backend/lib/sertantai_hub_web/endpoint.ex:30-32`
 - Config: `.mcp.json` (MCP server proxy)
 - Permissions: `.claude/settings.local.json.example`
 
@@ -335,14 +335,14 @@ stream.subscribe((messages) => {
 
 ### Adding a New Domain Resource
 
-1. **Create resource file**: `backend/lib/starter_app/your_domain/your_resource.ex`
+1. **Create resource file**: `backend/lib/sertantai_hub/your_domain/your_resource.ex`
 2. **Define Ash resource** (see template in Core Concepts #1)
-3. **Register in domain**: Add to `backend/lib/starter_app/api.ex`
+3. **Register in domain**: Add to `backend/lib/sertantai_hub/api.ex`
    ```elixir
    resources do
-     resource StarterApp.Auth.User
-     resource StarterApp.Auth.Organization
-     resource StarterApp.YourDomain.YourResource  # Add here
+     resource SertantaiHub.Auth.User
+     resource SertantaiHub.Auth.Organization
+     resource SertantaiHub.YourDomain.YourResource  # Add here
    end
    ```
 4. **Generate migration**: `mix ash_postgres.generate_migrations --name add_your_resources`
@@ -374,10 +374,10 @@ stream.subscribe((messages) => {
 ### Renaming the Template
 
 **Backend** (find & replace):
-- `StarterApp` → `YourApp`
-- `:starter_app` → `:your_app`
-- `starter_app` → `your_app`
-- `StarterAppWeb` → `YourAppWeb`
+- `SertantaiHub` → `YourApp`
+- `:sertantai_hub` → `:your_app`
+- `sertantai_hub` → `your_app`
+- `SertantaiHubWeb` → `YourAppWeb`
 
 **Frontend**:
 - Update `package.json` name
@@ -388,8 +388,8 @@ stream.subscribe((messages) => {
 - Update `config/dev.exs` and `config/runtime.exs` DATABASE_URL
 
 **Files to rename**:
-- `backend/lib/starter_app/` → `backend/lib/your_app/`
-- `backend/lib/starter_app_web/` → `backend/lib/your_app_web/`
+- `backend/lib/sertantai_hub/` → `backend/lib/your_app/`
+- `backend/lib/sertantai_hub_web/` → `backend/lib/your_app_web/`
 
 ### Testing Strategy
 
@@ -417,7 +417,7 @@ stream.subscribe((messages) => {
 ### Backend Configuration
 
 **mix.exs** (backend/mix.exs):
-- App name: `:starter_app`
+- App name: `:sertantai_hub`
 - Dependencies: Ash, Phoenix, ElectricSQL-compatible PostgreSQL
 - Aliases: `mix ash.setup`, `mix ash.reset`
 
@@ -470,7 +470,7 @@ stream.subscribe((messages) => {
 
 **"Could not find resource YourResource"**:
 - Resource not registered in domain
-- Add to `lib/starter_app/api.ex`
+- Add to `lib/sertantai_hub/api.ex`
 
 **Migration fails with "type :text does not exist"**:
 - Use `:string` instead of `:text` in Ash resources

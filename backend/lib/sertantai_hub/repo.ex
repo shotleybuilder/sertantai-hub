@@ -1,6 +1,6 @@
-defmodule StarterApp.Repo do
+defmodule SertantaiHub.Repo do
   use AshPostgres.Repo,
-    otp_app: :starter_app
+    otp_app: :sertantai_hub
 
   def installed_extensions do
     ["uuid-ossp", "citext", "ash-functions"]

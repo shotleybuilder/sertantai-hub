@@ -1,9 +1,9 @@
-defmodule StarterApp.MixProject do
+defmodule SertantaiHub.MixProject do
   use Mix.Project
 
   def project do
     [
-      app: :starter_app,
+      app: :sertantai_hub,
       version: "0.1.0",
       elixir: "~> 1.14",
       elixirc_paths: elixirc_paths(Mix.env()),
@@ -19,7 +19,7 @@ defmodule StarterApp.MixProject do
   # Type `mix help compile.app` for more information.
   def application do
     [
-      mod: {StarterApp.Application, []},
+      mod: {SertantaiHub.Application, []},
       extra_applications: [:logger, :runtime_tools]
     ]
   end
@@ -46,6 +46,7 @@ defmodule StarterApp.MixProject do
       {:dns_cluster, "~> 0.1.1"},
       {:bandit, "~> 1.5"},
       {:corsica, "~> 2.1"},
+      {:req, "~> 0.5"},
 
       # Ash Framework
       {:ash, "~> 3.0"},

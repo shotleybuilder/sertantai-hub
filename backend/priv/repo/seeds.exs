@@ -4,9 +4,9 @@
 #
 # This is a starter template - add your seed data here as you build your application.
 
-alias StarterApp.Auth.{Organization, User}
+alias SertantaiHub.Auth.{Organization, User}
 
-IO.puts("\n🌱 Seeding StarterApp database...")
+IO.puts("\n🌱 Seeding SertantaiHub database...")
 
 # ========================================
 # EXAMPLE: Create organization and users
@@ -19,7 +19,7 @@ IO.puts("\n🌱 Seeding StarterApp database...")
 #
 # {:ok, %Postgrex.Result{rows: [org_row]}} =
 #   Ecto.Adapters.SQL.query(
-#     StarterApp.Repo,
+#     SertantaiHub.Repo,
 #     "INSERT INTO organizations (id, name, slug, inserted_at, updated_at)
 #    VALUES ($1, $2, $3, $4, $5)
 #    ON CONFLICT (id) DO UPDATE SET name = EXCLUDED.name
@@ -34,7 +34,7 @@ IO.puts("\n🌱 Seeding StarterApp database...")
 #
 # {:ok, %Postgrex.Result{rows: [user_row]}} =
 #   Ecto.Adapters.SQL.query(
-#     StarterApp.Repo,
+#     SertantaiHub.Repo,
 #     "INSERT INTO users (id, email, name, organization_id, inserted_at, updated_at)
 #    VALUES ($1, $2, $3, $4, $5, $6)
 #    ON CONFLICT (id) DO UPDATE SET email = EXCLUDED.email

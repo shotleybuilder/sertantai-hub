@@ -1,28 +1,26 @@
-defmodule StarterApp.Auth.User do
+defmodule SertantaiHub.Auth.Organization do
   @moduledoc """
-  User resource for authentication and authorization.
+  Organization resource for multi-tenant data isolation.
   In a production setup, this would typically be synced from a centralized auth service.
-  This starter demonstrates a read-only pattern, but you can modify it to support local user management.
+  This starter demonstrates a read-only pattern, but you can modify it to support local organization management.
   """
   use Ash.Resource,
     data_layer: AshPostgres.DataLayer,
-    domain: StarterApp.Api
+    domain: SertantaiHub.Api
 
   postgres do
-    table("users")
-    repo(StarterApp.Repo)
+    table("organizations")
+    repo(SertantaiHub.Repo)
   end
 
   attributes do
     uuid_primary_key(:id)
 
-    attribute :email, :string do
+    attribute :name, :string do
       allow_nil?(false)
     end
 
-    attribute(:name, :string)
-
-    attribute :organization_id, :uuid do
+    attribute :slug, :string do
       allow_nil?(false)
     end
 
@@ -31,7 +29,7 @@ defmodule StarterApp.Auth.User do
   end
 
   relationships do
-    belongs_to :organization, StarterApp.Auth.Organization
+    has_many :users, SertantaiHub.Auth.User
   end
 
   actions do
@@ -43,15 +41,16 @@ defmodule StarterApp.Auth.User do
       filter(expr(id == ^arg(:id)))
     end
 
-    read :by_organization do
-      argument(:organization_id, :uuid, allow_nil?: false)
-      filter(expr(organization_id == ^arg(:organization_id)))
+    read :by_slug do
+      argument(:slug, :string, allow_nil?: false)
+      get?(true)
+      filter(expr(slug == ^arg(:slug)))
     end
   end
 
   code_interface do
     define(:read)
     define(:by_id, args: [:id])
-    define(:by_organization, args: [:organization_id])
+    define(:by_slug, args: [:slug])
   end
 end
