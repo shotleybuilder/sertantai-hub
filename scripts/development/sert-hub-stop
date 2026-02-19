@@ -14,6 +14,27 @@
 
 set -e
 
+# Help
+show_help() {
+    echo "sert-hub-stop - Stop sertantai-hub development servers"
+    echo ""
+    echo "Usage: sert-hub-stop [OPTIONS]"
+    echo ""
+    echo "Options:"
+    echo "  --docker        Also stop Docker containers (preserves data)"
+    echo "  --auth          Also stop sertantai-auth service"
+    echo "  --legal         Also stop sertantai-legal"
+    echo "  --enforcement   Also stop sertantai-enforcement"
+    echo "  --thick         Stop all services (auth + legal + enforcement)"
+    echo "  -h, --help      Show this help message"
+    echo ""
+    echo "Common patterns:"
+    echo "  sert-hub-stop                     Hub only (Docker keeps running)"
+    echo "  sert-hub-stop --docker --auth     Stop hub + auth + containers"
+    echo "  sert-hub-stop --docker --thick    Stop everything"
+    exit 0
+}
+
 # Parse arguments
 MANAGE_DOCKER=false
 MANAGE_AUTH=false
@@ -22,6 +43,9 @@ MANAGE_ENFORCEMENT=false
 THICK_MODE=false
 for arg in "$@"; do
     case $arg in
+        -h|--help)
+            show_help
+            ;;
         --docker)
             MANAGE_DOCKER=true
             ;;

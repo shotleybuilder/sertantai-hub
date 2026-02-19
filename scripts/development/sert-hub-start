@@ -21,6 +21,29 @@
 
 set -e
 
+# Help
+show_help() {
+    echo "sert-hub-start - Start sertantai-hub development servers"
+    echo ""
+    echo "Usage: sert-hub-start [OPTIONS]"
+    echo ""
+    echo "Options:"
+    echo "  --docker        Start Docker containers (postgres + electric)"
+    echo "  --auth          Also start sertantai-auth service (port 4000)"
+    echo "  --legal         Also start sertantai-legal (ports 4003/5175)"
+    echo "  --enforcement   Also start sertantai-enforcement (ports 4001/5174)"
+    echo "  --thick         Start all services (auth + legal + enforcement)"
+    echo "  -h, --help      Show this help message"
+    echo ""
+    echo "Common patterns:"
+    echo "  sert-hub-start                    Hub only (assumes deps running)"
+    echo "  sert-hub-start --docker --auth    Thin test (hub + auth + containers)"
+    echo "  sert-hub-start --docker --thick   Thick test (full micro-services stack)"
+    echo ""
+    echo "Hub ports: backend 4006, frontend 5173, postgres 5435, electric 3000"
+    exit 0
+}
+
 # Parse arguments
 MANAGE_DOCKER=false
 MANAGE_AUTH=false
@@ -29,6 +52,9 @@ MANAGE_ENFORCEMENT=false
 THICK_MODE=false
 for arg in "$@"; do
     case $arg in
+        -h|--help)
+            show_help
+            ;;
         --docker)
             MANAGE_DOCKER=true
             ;;

@@ -16,6 +16,30 @@
 
 set -e
 
+# Help
+show_help() {
+    echo "sert-hub-restart - Restart sertantai-hub development servers"
+    echo ""
+    echo "Usage: sert-hub-restart [OPTIONS]"
+    echo ""
+    echo "Options:"
+    echo "  --frontend      Restart only frontend (port 5173)"
+    echo "  --backend       Restart only backend (port 4006)"
+    echo "  --docker        Also restart Docker containers (preserves data)"
+    echo "  --auth          Also manage sertantai-auth service"
+    echo "  --thick         Restart hub + auth"
+    echo "  --force         Force kill immediately (skip graceful shutdown)"
+    echo "  -h, --help      Show this help message"
+    echo ""
+    echo "Common patterns:"
+    echo "  sert-hub-restart                  Restart all hub servers"
+    echo "  sert-hub-restart --frontend       Restart frontend only"
+    echo "  sert-hub-restart --backend        Restart backend only"
+    echo "  sert-hub-restart --force          Force kill then restart"
+    echo "  sert-hub-restart --docker --auth  Restart everything"
+    exit 0
+}
+
 # Parse arguments
 MANAGE_DOCKER=false
 MANAGE_AUTH=false
@@ -25,6 +49,9 @@ BACKEND_ONLY=false
 THICK_MODE=false
 for arg in "$@"; do
     case $arg in
+        -h|--help)
+            show_help
+            ;;
         --docker)
             MANAGE_DOCKER=true
             ;;
