@@ -37,7 +37,7 @@ RUN mix release
 ################################################################################
 # Runner Stage
 ################################################################################
-FROM alpine:3.21
+FROM alpine:3.23
 
 # Install runtime dependencies
 RUN apk add --no-cache \
