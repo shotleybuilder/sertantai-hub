@@ -1,161 +1,157 @@
 <script lang="ts">
-	import { onMount } from 'svelte';
-	import { authStore, logout } from '$lib/stores/auth';
-
-	let message = '';
-	let status = '';
-	let error = '';
-	let loading = true;
-
-	const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:4006';
-
-	async function fetchHello() {
-		loading = true;
-		error = '';
-
-		try {
-			const response = await fetch(`${API_URL}/api/hello`);
-			if (!response.ok) {
-				throw new Error(`HTTP error! status: ${response.status}`);
-			}
-			const data = await response.json();
-			message = data.message;
-			status = 'success';
-		} catch (e) {
-			error = e instanceof Error ? e.message : 'Unknown error';
-			status = 'error';
-		} finally {
-			loading = false;
-		}
-	}
-
-	onMount(() => {
-		fetchHello();
-	});
+	import { authStore } from '$lib/stores/auth';
 </script>
 
-<main class="min-h-screen flex items-center justify-center p-8 bg-gray-50">
-	<div class="max-w-2xl w-full space-y-6">
-		<!-- Header -->
-		<div class="text-center">
-			<h1 class="text-4xl font-bold text-gray-900 mb-2">SertantAI Hub</h1>
-			<p class="text-gray-600">Central Hub for SertantAI Services</p>
-		</div>
-
-		<!-- Auth Nav -->
-		<div class="bg-white rounded-lg shadow-lg p-6">
-			{#if $authStore.isAuthenticated}
-				<div class="flex items-center justify-between">
-					<div>
-						<p class="text-sm text-gray-500">Signed in as</p>
-						<p class="font-medium text-gray-900">{$authStore.user?.email}</p>
-						{#if $authStore.role}
-							<p class="text-xs text-gray-400 mt-1">Role: {$authStore.role}</p>
-						{/if}
-					</div>
-					<button
-						on:click={() => logout()}
-						class="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-100 rounded-lg
-							hover:bg-gray-200 transition-colors duration-200"
-					>
-						Sign Out
-					</button>
-				</div>
-			{:else}
-				<div class="flex items-center justify-center space-x-4">
-					<a
-						href="/login"
-						class="px-6 py-2 bg-blue-600 text-white font-medium rounded-lg
-							hover:bg-blue-700 transition-colors duration-200"
-					>
-						Sign In
-					</a>
-					<a
-						href="/register"
-						class="px-6 py-2 bg-white text-blue-600 font-medium rounded-lg border border-blue-600
-							hover:bg-blue-50 transition-colors duration-200"
-					>
-						Register
-					</a>
-				</div>
-			{/if}
-		</div>
-
-		<!-- Backend API Test Card -->
-		<div class="bg-white rounded-lg shadow-lg p-8">
-			<h2 class="text-2xl font-semibold text-gray-800 mb-6">Backend API Test</h2>
-
-			<div class="min-h-[80px] flex items-center justify-center">
-				{#if loading}
-					<div class="flex items-center space-x-2">
-						<div class="animate-spin rounded-full h-5 w-5 border-b-2 border-blue-600"></div>
-						<p class="text-gray-600 italic">Loading...</p>
-					</div>
-				{:else if status === 'success'}
-					<div class="text-center">
-						<svg
-							class="w-12 h-12 text-green-500 mx-auto mb-2"
-							fill="none"
-							stroke="currentColor"
-							viewBox="0 0 24 24"
-						>
-							<path
-								stroke-linecap="round"
-								stroke-linejoin="round"
-								stroke-width="2"
-								d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
-							/>
-						</svg>
-						<p class="text-green-600 font-semibold text-lg">{message}</p>
-					</div>
-				{:else if error}
-					<div class="text-center">
-						<svg
-							class="w-12 h-12 text-red-500 mx-auto mb-2"
-							fill="none"
-							stroke="currentColor"
-							viewBox="0 0 24 24"
-						>
-							<path
-								stroke-linecap="round"
-								stroke-linejoin="round"
-								stroke-width="2"
-								d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z"
-							/>
-						</svg>
-						<p class="text-red-600 font-semibold">Error: {error}</p>
-					</div>
-				{/if}
-			</div>
-
-			<div class="mt-6 text-center">
-				<button
-					on:click={fetchHello}
-					disabled={loading}
-					class="px-6 py-3 bg-blue-600 text-white font-medium rounded-lg
-						hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2
-						disabled:bg-gray-300 disabled:cursor-not-allowed
-						transition-colors duration-200"
-				>
-					{loading ? 'Loading...' : 'Refresh'}
-				</button>
-			</div>
-		</div>
-
-		<!-- API Info Card -->
-		<div class="bg-gray-100 rounded-lg p-4">
-			<p class="text-sm text-gray-700">
-				API URL: <code class="bg-gray-200 px-2 py-1 rounded text-gray-900 font-mono text-xs"
-					>{API_URL}</code
-				>
+<main class="min-h-screen bg-gray-50">
+	<!-- Hero -->
+	<section class="bg-gradient-to-br from-blue-600 to-blue-800 text-white">
+		<div class="max-w-5xl mx-auto px-4 py-16 sm:py-24 text-center">
+			<h1 class="text-4xl sm:text-5xl font-bold tracking-tight mb-4">SertantAI</h1>
+			<p class="text-xl sm:text-2xl font-light text-blue-100 mb-6">
+				Compliance intelligence for a better world
+			</p>
+			<p class="max-w-2xl mx-auto text-blue-200 leading-relaxed">
+				A not-for-profit platform providing regulatory compliance services for environment, health
+				&amp; safety, and enforcement professionals. Free core access for all registered users.
 			</p>
 		</div>
+	</section>
 
-		<!-- Tech Stack Badge -->
-		<div class="text-center text-sm text-gray-500">
-			<p>
-				SvelteKit + TypeScript + TailwindCSS + Phoenix + Ash Framework + ElectricSQL + TanStack DB
+	<!-- Services -->
+	<section class="max-w-5xl mx-auto px-4 py-16">
+		<h2 class="text-2xl font-bold text-gray-900 text-center mb-10">Services</h2>
+		<div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+			<!-- Legal -->
+			<div class="bg-white rounded-lg shadow-lg p-6">
+				<div class="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center mb-4">
+					<svg class="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+						<path
+							stroke-linecap="round"
+							stroke-linejoin="round"
+							stroke-width="2"
+							d="M3 6l3 1m0 0l-3 9a5.002 5.002 0 006.001 0M6 7l3 9M6 7l6-2m6 2l3-1m-3 1l-3 9a5.002 5.002 0 006.001 0M18 7l3 9m-3-9l-6-2m0-2v2m0 16V5m0 16H9m3 0h3"
+						/>
+					</svg>
+				</div>
+				<h3 class="text-lg font-semibold text-gray-900 mb-2">Legal</h3>
+				<p class="text-sm text-gray-600 mb-4">
+					UK legal registers for health &amp; safety and environmental legislation. Track primary
+					and secondary law across your compliance landscape.
+				</p>
+				<span
+					class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-amber-100 text-amber-800"
+				>
+					In Development
+				</span>
+			</div>
+
+			<!-- Enforcement -->
+			<div class="bg-white rounded-lg shadow-lg p-6">
+				<div class="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center mb-4">
+					<svg class="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+						<path
+							stroke-linecap="round"
+							stroke-linejoin="round"
+							stroke-width="2"
+							d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"
+						/>
+					</svg>
+				</div>
+				<h3 class="text-lg font-semibold text-gray-900 mb-2">Enforcement</h3>
+				<p class="text-sm text-gray-600 mb-4">
+					Regulatory enforcement data and tracking. Monitor enforcement actions, notices, and
+					prosecutions across regulatory bodies.
+				</p>
+				<span
+					class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-amber-100 text-amber-800"
+				>
+					In Development
+				</span>
+			</div>
+
+			<!-- Controls -->
+			<div class="bg-white rounded-lg shadow-lg p-6">
+				<div class="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center mb-4">
+					<svg class="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+						<path
+							stroke-linecap="round"
+							stroke-linejoin="round"
+							stroke-width="2"
+							d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"
+						/>
+					</svg>
+				</div>
+				<h3 class="text-lg font-semibold text-gray-900 mb-2">Controls</h3>
+				<p class="text-sm text-gray-600 mb-4">
+					Compliance controls and management tools. Maintain your compliance position with
+					structured control frameworks and assessments.
+				</p>
+				<span
+					class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-amber-100 text-amber-800"
+				>
+					In Development
+				</span>
+			</div>
+		</div>
+	</section>
+
+	<!-- Mission -->
+	<section class="bg-white border-y border-gray-200">
+		<div class="max-w-3xl mx-auto px-4 py-16 text-center">
+			<h2 class="text-2xl font-bold text-gray-900 mb-6">Our Mission</h2>
+			<p class="text-gray-600 leading-relaxed mb-4">
+				SertantAI is a not-for-profit creating information services for environment, health &amp;
+				safety, and enforcement professionals. All services require registration to ensure quality
+				access and protect against automated abuse.
+			</p>
+			<p class="text-gray-600 leading-relaxed">
+				Core services are free for all registered users. Premium tiers provide extended data,
+				advanced tools, and dedicated support to fund our mission of making compliance accessible to
+				everyone.
 			</p>
 		</div>
-	</div>
+	</section>
+
+	<!-- Account -->
+	{#if $authStore.isAuthenticated}
+		<section class="max-w-5xl mx-auto px-4 py-16">
+			<h2 class="text-2xl font-bold text-gray-900 text-center mb-10">Your Account</h2>
+			<div class="max-w-md mx-auto bg-white rounded-lg shadow-lg p-6">
+				<div class="space-y-3">
+					<div class="flex justify-between">
+						<span class="text-sm text-gray-500">Email</span>
+						<span class="text-sm font-medium text-gray-900">{$authStore.user?.email}</span>
+					</div>
+					{#if $authStore.role}
+						<div class="flex justify-between">
+							<span class="text-sm text-gray-500">Role</span>
+							<span
+								class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-blue-100 text-blue-800"
+							>
+								{$authStore.role}
+							</span>
+						</div>
+					{/if}
+					{#if $authStore.organizationId}
+						<div class="flex justify-between">
+							<span class="text-sm text-gray-500">Organization</span>
+							<span class="text-sm font-mono text-gray-600"
+								>{$authStore.organizationId.slice(0, 8)}...</span
+							>
+						</div>
+					{/if}
+				</div>
+			</div>
+		</section>
+	{/if}
+
+	<!-- Footer -->
+	<footer class="border-t border-gray-200 bg-gray-50">
+		<div class="max-w-5xl mx-auto px-4 py-8 text-center text-sm text-gray-500">
+			<p>SertantAI &mdash; Not-for-profit compliance intelligence</p>
+			<p class="mt-2 text-xs text-gray-400">
+				SvelteKit + TypeScript + TailwindCSS + Phoenix + Ash Framework + ElectricSQL
+			</p>
+		</div>
+	</footer>
 </main>
