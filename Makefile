@@ -1,17 +1,19 @@
-.PHONY: help setup dev stop clean migrate rollback seed test test-frontend test-backend lint format build check-infrastructure
+.PHONY: help setup dev stop clean migrate rollback seed test test-frontend test-backend lint format build
 
 # Default target
 help:
-	@echo "Sertantai Controls - Development Commands"
+	@echo "SertantAI Hub - Development Commands"
 	@echo ""
 	@echo "Setup & Development:"
 	@echo "  make setup          - Install dependencies for frontend and backend"
-	@echo "  make dev            - Start all development services"
-	@echo "  make stop           - Stop all services"
-	@echo "  make clean          - Clean build artifacts and dependencies"
+	@echo "  make dev            - Start dev servers (thin: hub + auth + containers)"
+	@echo "  make dev-thick      - Start full micro-services stack"
+	@echo "  make stop           - Stop hub servers"
+	@echo "  make stop-all       - Stop hub + all micro-services"
+	@echo "  make clean          - Clean build artifacts, deps, and DB volumes (DESTRUCTIVE)"
 	@echo ""
 	@echo "Database:"
-	@echo "  make migrate        - Run database migrations"
+	@echo "  make migrate        - Run database migrations (Ash)"
 	@echo "  make rollback       - Rollback last migration"
 	@echo "  make seed           - Seed database with test data"
 	@echo ""
@@ -26,6 +28,12 @@ help:
 	@echo ""
 	@echo "Production:"
 	@echo "  make build          - Build production artifacts"
+	@echo ""
+	@echo "Scripts (recommended):"
+	@echo "  sert-hub-start --docker --auth     - Thin test"
+	@echo "  sert-hub-start --docker --thick    - Thick test (all services)"
+	@echo "  sert-hub-stop                      - Stop hub"
+	@echo "  sert-hub-restart --frontend        - Restart frontend only"
 
 # Install dependencies
 setup:
@@ -35,43 +43,37 @@ setup:
 	cd backend && mix deps.get
 	@echo "Setup complete!"
 
-# Start development environment
+# Start development environment (thin: hub + auth + containers)
 dev:
-	@echo "Starting development services..."
-	@echo "  - PostgreSQL (local)"
-	@echo "  - ElectricSQL"
-	@echo "  - Auth Proxy"
-	@echo "  - Backend (Phoenix)"
-	@echo "  - Frontend (Vite)"
-	@echo ""
-	docker-compose -f docker-compose.dev.yml up -d
-	@echo ""
-	@echo "Services started!"
-	@echo "  PostgreSQL:  localhost:5432"
-	@echo "  Frontend:    http://localhost:5173"
-	@echo "  Backend API: http://localhost:4000"
-	@echo "  Auth Proxy:  http://localhost:3000"
-	@echo "  Electric:    http://localhost:5133"
-	@echo ""
-	@echo "View logs: docker-compose -f docker-compose.dev.yml logs -f"
+	./scripts/development/sert-hub-start --docker --auth
 
-# Stop all services
+# Start full micro-services stack (thick test)
+dev-thick:
+	./scripts/development/sert-hub-start --docker --thick
+
+# Stop hub services
 stop:
-	@echo "Stopping development services..."
-	docker-compose -f docker-compose.dev.yml down
+	./scripts/development/sert-hub-stop
 
-# Clean build artifacts and dependencies
+# Stop all services including micro-services
+stop-all:
+	./scripts/development/sert-hub-stop --docker --thick
+
+# Clean build artifacts and dependencies (WARNING: destroys DB volumes!)
 clean:
+	@echo "WARNING: This will destroy Docker volumes including the dev database!"
+	@echo "Press Ctrl+C within 5 seconds to cancel..."
+	@sleep 5
 	@echo "Cleaning build artifacts..."
 	cd frontend && rm -rf node_modules .svelte-kit build dist
 	cd backend && rm -rf _build deps
-	docker-compose -f docker-compose.dev.yml down -v
+	docker compose -f docker-compose.dev.yml down -v
 	@echo "Clean complete!"
 
-# Run database migrations
+# Run database migrations (use Ash generators, not plain Ecto)
 migrate:
 	@echo "Running database migrations..."
-	cd backend && mix ecto.migrate
+	cd backend && mix ash_postgres.migrate
 
 # Rollback last migration
 rollback:
