@@ -1,12 +1,13 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
+	import { authStore, logout } from '$lib/stores/auth';
 
 	let message = '';
 	let status = '';
 	let error = '';
 	let loading = true;
 
-	const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:4000';
+	const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:4006';
 
 	async function fetchHello() {
 		loading = true;
@@ -33,12 +34,51 @@
 	});
 </script>
 
-<main class="min-h-screen flex items-center justify-center p-8">
+<main class="min-h-screen flex items-center justify-center p-8 bg-gray-50">
 	<div class="max-w-2xl w-full space-y-6">
 		<!-- Header -->
 		<div class="text-center">
-			<h1 class="text-4xl font-bold text-gray-900 mb-2">Starter App</h1>
-			<p class="text-gray-600">Full-Stack Real-Time Application Template</p>
+			<h1 class="text-4xl font-bold text-gray-900 mb-2">SertantAI Hub</h1>
+			<p class="text-gray-600">Central Hub for SertantAI Services</p>
+		</div>
+
+		<!-- Auth Nav -->
+		<div class="bg-white rounded-lg shadow-lg p-6">
+			{#if $authStore.isAuthenticated}
+				<div class="flex items-center justify-between">
+					<div>
+						<p class="text-sm text-gray-500">Signed in as</p>
+						<p class="font-medium text-gray-900">{$authStore.user?.email}</p>
+						{#if $authStore.role}
+							<p class="text-xs text-gray-400 mt-1">Role: {$authStore.role}</p>
+						{/if}
+					</div>
+					<button
+						on:click={() => logout()}
+						class="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-100 rounded-lg
+							hover:bg-gray-200 transition-colors duration-200"
+					>
+						Sign Out
+					</button>
+				</div>
+			{:else}
+				<div class="flex items-center justify-center space-x-4">
+					<a
+						href="/login"
+						class="px-6 py-2 bg-blue-600 text-white font-medium rounded-lg
+							hover:bg-blue-700 transition-colors duration-200"
+					>
+						Sign In
+					</a>
+					<a
+						href="/register"
+						class="px-6 py-2 bg-white text-blue-600 font-medium rounded-lg border border-blue-600
+							hover:bg-blue-50 transition-colors duration-200"
+					>
+						Register
+					</a>
+				</div>
+			{/if}
 		</div>
 
 		<!-- Backend API Test Card -->
@@ -93,9 +133,9 @@
 					on:click={fetchHello}
 					disabled={loading}
 					class="px-6 py-3 bg-blue-600 text-white font-medium rounded-lg
-                       hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2
-                       disabled:bg-gray-300 disabled:cursor-not-allowed
-                       transition-colors duration-200"
+						hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2
+						disabled:bg-gray-300 disabled:cursor-not-allowed
+						transition-colors duration-200"
 				>
 					{loading ? 'Loading...' : 'Refresh'}
 				</button>

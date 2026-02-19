@@ -161,7 +161,7 @@ export async function refresh(): Promise<boolean> {
 
 		const data = await response.json();
 		setAuth(
-			data.access_token,
+			data.token,
 			{ id: data.user.id, email: data.user.email },
 			data.organization_id,
 			data.role
@@ -198,7 +198,7 @@ export async function initialize(): Promise<void> {
 	authStore.set({
 		token,
 		user: { id: payload.sub, email: payload.email || '' },
-		organizationId: payload.organization_id || null,
+		organizationId: payload.org_id || payload.organization_id || null,
 		role: payload.role || null,
 		isAuthenticated: true
 	});
