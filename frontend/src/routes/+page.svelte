@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { authStore } from '$lib/stores/auth';
+	import { goto } from '$app/navigation';
 </script>
 
 <main class="min-h-screen bg-gray-50">
@@ -14,6 +15,29 @@
 				A not-for-profit platform providing regulatory compliance services for environment, health
 				&amp; safety, and enforcement professionals. Free core access for all registered users.
 			</p>
+			<div class="mt-8 flex flex-col sm:flex-row gap-4 justify-center">
+				{#if $authStore.isAuthenticated}
+					<button
+						on:click={() => goto('/dashboard')}
+						class="px-6 py-3 bg-white text-blue-700 font-semibold rounded-lg hover:bg-blue-50 transition-colors duration-200"
+					>
+						Go to Dashboard
+					</button>
+				{:else}
+					<a
+						href="/register"
+						class="px-6 py-3 bg-white text-blue-700 font-semibold rounded-lg hover:bg-blue-50 transition-colors duration-200"
+					>
+						Create Free Account
+					</a>
+					<a
+						href="/login"
+						class="px-6 py-3 border-2 border-white text-white font-semibold rounded-lg hover:bg-white/10 transition-colors duration-200"
+					>
+						Sign In
+					</a>
+				{/if}
+			</div>
 		</div>
 	</section>
 
@@ -111,39 +135,6 @@
 			</p>
 		</div>
 	</section>
-
-	<!-- Account -->
-	{#if $authStore.isAuthenticated}
-		<section class="max-w-5xl mx-auto px-4 py-16">
-			<h2 class="text-2xl font-bold text-gray-900 text-center mb-10">Your Account</h2>
-			<div class="max-w-md mx-auto bg-white rounded-lg shadow-lg p-6">
-				<div class="space-y-3">
-					<div class="flex justify-between">
-						<span class="text-sm text-gray-500">Email</span>
-						<span class="text-sm font-medium text-gray-900">{$authStore.user?.email}</span>
-					</div>
-					{#if $authStore.role}
-						<div class="flex justify-between">
-							<span class="text-sm text-gray-500">Role</span>
-							<span
-								class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-blue-100 text-blue-800"
-							>
-								{$authStore.role}
-							</span>
-						</div>
-					{/if}
-					{#if $authStore.organizationId}
-						<div class="flex justify-between">
-							<span class="text-sm text-gray-500">Organization</span>
-							<span class="text-sm font-mono text-gray-600"
-								>{$authStore.organizationId.slice(0, 8)}...</span
-							>
-						</div>
-					{/if}
-				</div>
-			</div>
-		</section>
-	{/if}
 
 	<!-- Footer -->
 	<footer class="border-t border-gray-200 bg-gray-50">

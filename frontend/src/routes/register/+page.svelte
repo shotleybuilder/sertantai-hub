@@ -30,7 +30,7 @@
 		loading = false;
 
 		if (result.ok) {
-			goto('/');
+			goto('/dashboard');
 		} else {
 			error = result.error || 'Registration failed';
 		}
