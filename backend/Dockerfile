@@ -65,11 +65,11 @@ RUN addgroup -g 1000 starter && \
 
 USER starter
 
-EXPOSE 4000
+EXPOSE 4006
 
 # Health check using the dedicated endpoint
 HEALTHCHECK --interval=30s --timeout=3s --start-period=10s --retries=3 \
-  CMD wget --no-verbose --tries=1 --spider http://localhost:4000/health || exit 1
+    CMD wget --no-verbose --tries=1 --spider http://localhost:4006/health || exit 1
 
 # Start script: run migrations then start server
 CMD ["/bin/bash", "-c", "/app/bin/sertantai_hub eval 'SertantaiHub.Release.migrate()' && /app/bin/sertantai_hub start"]
