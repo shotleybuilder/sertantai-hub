@@ -12,19 +12,13 @@ SertantAI is a microservices ecosystem where each service is a local-first appli
                     │   (This Repo)   │
                     └────────┬────────┘
                              │
-        ┌────────────────────┼────────────────────┐
-        │                    │                    │
-        ▼                    ▼                    ▼
-┌───────────────┐  ┌───────────────┐  ┌───────────────┐
-│ sertantai-auth│  │sertantai-legal│  │sertantai-     │
-│               │  │               │  │ enforcement   │
-└───────────────┘  └───────────────┘  └───────────────┘
-                             │
-                             ▼
-                   ┌───────────────┐
-                   │ sertantai-    │
-                   │  controls     │
-                   └───────────────┘
+        ┌────────────────────┼────────────────────┐───────────────────┐
+        │                    │                    │                   │
+        ▼                    ▼                   ▼                   ▼
+┌───────────────┐  ┌───────────────┐  ┌───────────────┐  ┌───────────────┐
+│ sertantai-auth│  │sertantai-legal│  │sertantai-     │  │sertantai-     │
+│               │  │               │  │ enforcement   │  │ controls      │
+└───────────────┘  └───────────────┘  └───────────────┘  └───────────────┘
 ```
 
 ### Services
@@ -38,6 +32,18 @@ SertantAI is a microservices ecosystem where each service is a local-first appli
 | **sertantai-controls** | Control management |
 
 All services share the same tech stack and local-first architecture pattern.
+
+### Port Allocations (Local Development)
+
+Each service uses unique ports to allow running multiple services simultaneously:
+
+| Service | PostgreSQL | Electric | Backend | Frontend |
+|---------|------------|----------|---------|----------|
+| **hub** | 5435 | 3000 | 4006 | 5173 |
+| **enforcement** | 5434 | 3001 | 4002 | 5174 |
+| **legal** | 5436 | 3002 | 4003 | 5175 |
+| **controls** | 5437 | 3003 | 4004 | 5176 |
+| **auth** | 5438 | — | 4000 | — |
 
 ## Tech Stack
 
@@ -104,13 +110,13 @@ npm install
 # Start development servers
 cd ..
 docker-compose -f docker-compose.dev.yml up -d  # PostgreSQL + ElectricSQL
-cd backend && mix phx.server &                   # Backend on :4000
+cd backend && mix phx.server &                   # Backend on :4006
 cd frontend && npm run dev                       # Frontend on :5173
 ```
 
 ### 2. Verify Setup
 
-- Backend API: http://localhost:4000/health
+- Backend API: http://localhost:4006/health
 - Frontend: http://localhost:5173
 - ElectricSQL: http://localhost:3000
 
@@ -195,7 +201,7 @@ FRONTEND_URL=http://localhost:5173
 
 **Frontend** (`frontend/.env`):
 ```bash
-VITE_API_URL=http://localhost:4000
+VITE_API_URL=http://localhost:4006
 PUBLIC_ELECTRIC_URL=http://localhost:3000
 ```
 
@@ -273,10 +279,10 @@ This template follows a **centralized infrastructure pattern** where PostgreSQL,
 
 **Backend:**
 ```bash
-curl http://localhost:4000/health
+curl http://localhost:4006/health
 # {"status": "ok", "service": "starter-app", "timestamp": "..."}
 
-curl http://localhost:4000/health/detailed
+curl http://localhost:4006/health/detailed
 # Includes database connectivity check
 ```
 

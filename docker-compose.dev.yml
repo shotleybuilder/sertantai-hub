@@ -64,14 +64,14 @@ services:
     environment:
       DATABASE_URL: postgresql://postgres:postgres@postgres:5432/starter_app_dev
       FRONTEND_URL: http://localhost:5173
-      ELECTRIC_URL: http://electric:5133
+      ELECTRIC_URL: http://electric:3000
       SECRET_KEY_BASE: ${SECRET_KEY_BASE:-dev-secret-key-base-min-64-chars-required-for-security}
       GUARDIAN_SECRET_KEY: ${GUARDIAN_SECRET_KEY:-dev-guardian-secret}
       GUARDIAN_ISSUER: starter_app
       MIX_ENV: dev
-      PORT: 4000
+      PORT: 4006
     ports:
-      - "4000:4000"
+      - "4006:4006"
     volumes:
       - ./backend:/app
       - backend_build:/app/_build
@@ -92,7 +92,7 @@ services:
       context: ./frontend
       dockerfile: Dockerfile.dev
     environment:
-      PUBLIC_API_URL: http://localhost:4000
+      PUBLIC_API_URL: http://localhost:4006
       PUBLIC_ELECTRIC_URL: http://localhost:3000  # New Electric HTTP API
       PUBLIC_ENV: development
       PUBLIC_ENABLE_DEBUG: "true"

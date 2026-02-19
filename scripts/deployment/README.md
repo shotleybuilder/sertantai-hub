@@ -372,9 +372,9 @@ docker logs starter-app-frontend
 ## Health Checks
 
 **Backend:**
-- Endpoint: `http://localhost:4000/health`
+- Endpoint: `http://localhost:4006/health`
 - Expected: `{"status": "ok", "service": "starter-app", "timestamp": "..."}`
-- Detailed: `http://localhost:4000/health/detailed` (includes database check)
+- Detailed: `http://localhost:4006/health/detailed` (includes database check)
 
 **Frontend:**
 - Endpoint: `http://localhost:3000/`

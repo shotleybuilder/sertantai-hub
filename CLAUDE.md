@@ -13,7 +13,7 @@ mix ash_postgres.create           # Create database
 mix ash_postgres.migrate          # Run migrations
 mix ash_postgres.generate_migrations --name <name>  # Generate migration from Ash resources
 mix run priv/repo/seeds.exs       # Seed database (minimal example seeds provided)
-mix phx.server                    # Start Phoenix server (http://localhost:4000)
+mix phx.server                    # Start Phoenix server (http://localhost:4006)
 mix test                          # Run tests
 mix credo                         # Static analysis
 mix dialyzer                      # Type checking
@@ -47,8 +47,8 @@ docker-compose -f docker-compose.dev.yml logs -f   # View logs
 ```
 
 ### Health Check Endpoints
-- Backend: http://localhost:4000/health
-- Backend detailed: http://localhost:4000/health/detailed
+- Backend: http://localhost:4006/health
+- Backend detailed: http://localhost:4006/health/detailed
 - ElectricSQL: http://localhost:3000 (HTTP Shape API)
 
 ## Architecture Overview
@@ -274,7 +274,7 @@ stream.subscribe((messages) => {
 **Docker Configuration** (docker-compose.dev.yml):
 - PostgreSQL: Runs with `wal_level=logical` for replication
 - ElectricSQL: Connects to PostgreSQL, exposes HTTP API on port 3000
-- Backend: Phoenix server on port 4000
+- Backend: Phoenix server on port 4006
 - Frontend: Vite dev server on port 5173
 
 ### 3. Multi-Tenancy Implementation
@@ -312,7 +312,7 @@ stream.subscribe((messages) => {
 **Setup**:
 1. Copy `.claude/settings.local.json.example` to `.claude/settings.local.json`
 2. Start backend: `mix phx.server`
-3. Tidewave available at: http://localhost:4000/tidewave/mcp
+3. Tidewave available at: http://localhost:4006/tidewave/mcp
 
 ### 5. Usage Rules Enforcement
 
@@ -450,7 +450,7 @@ stream.subscribe((messages) => {
 **docker-compose.dev.yml**:
 - PostgreSQL: Port 5435, logical replication enabled
 - ElectricSQL: Port 3000, connected to PostgreSQL
-- Backend: Port 4000 (optional container)
+- Backend: Port 4006 (optional container)
 - Frontend: Port 5173 (optional container)
 
 **Environment Variables**:
