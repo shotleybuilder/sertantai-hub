@@ -55,6 +55,7 @@ function setAuth(
 function clearAuth() {
 	localStorage.removeItem(STORAGE_KEY);
 	authStore.set(initialState);
+	stopRefreshPoll();
 }
 
 /**
@@ -173,9 +174,39 @@ export async function refresh(): Promise<boolean> {
 	}
 }
 
+let refreshInterval: ReturnType<typeof setInterval> | null = null;
+
+/**
+ * Start a 60-second interval that checks token expiry and refreshes if needed.
+ * Clears auth and stops polling on refresh failure.
+ */
+function startRefreshPoll() {
+	stopRefreshPoll();
+	refreshInterval = setInterval(async () => {
+		const { token } = get(authStore);
+		if (!token) {
+			stopRefreshPoll();
+			return;
+		}
+		// Refresh if within 5 minutes of expiry
+		if (isExpired(token, 5 * 60 * 1000)) {
+			const ok = await refresh();
+			if (!ok) stopRefreshPoll();
+		}
+	}, 60_000);
+}
+
+function stopRefreshPoll() {
+	if (refreshInterval) {
+		clearInterval(refreshInterval);
+		refreshInterval = null;
+	}
+}
+
 /**
  * Restore auth state from localStorage on app init.
  * If token is expired, clears it. If near expiry, refreshes.
+ * Starts a 60-second poll to keep the token fresh.
  */
 export async function initialize(): Promise<void> {
 	if (typeof window === 'undefined') return;
@@ -207,4 +238,6 @@ export async function initialize(): Promise<void> {
 	if (isExpired(token, 5 * 60 * 1000)) {
 		await refresh();
 	}
+
+	startRefreshPoll();
 }
