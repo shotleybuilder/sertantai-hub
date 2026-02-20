@@ -25,5 +25,7 @@ defmodule SertantaiHubWeb.Router do
     post("/login", AuthProxyController, :sign_in)
     post("/logout", AuthProxyController, :sign_out)
     post("/refresh", AuthProxyController, :refresh)
+    post("/magic-link/request", AuthProxyController, :magic_link_request)
+    post("/magic-link/callback", AuthProxyController, :magic_link_callback)
   end
 end

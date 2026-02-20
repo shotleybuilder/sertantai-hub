@@ -174,6 +174,58 @@ export async function refresh(): Promise<boolean> {
 	}
 }
 
+/**
+ * Request a magic link email for passwordless login.
+ */
+export async function requestMagicLink(email: string): Promise<{ ok: boolean; error?: string }> {
+	try {
+		const response = await fetch(`${API_URL}/api/auth/magic-link/request`, {
+			method: 'POST',
+			headers: { 'Content-Type': 'application/json' },
+			body: JSON.stringify({ email })
+		});
+
+		const data = await response.json();
+
+		if (!response.ok) {
+			return { ok: false, error: data.error || data.message || 'Failed to send magic link' };
+		}
+
+		return { ok: true };
+	} catch (e) {
+		return { ok: false, error: e instanceof Error ? e.message : 'Network error' };
+	}
+}
+
+/**
+ * Complete magic link authentication with the token from the email link.
+ */
+export async function completeMagicLink(token: string): Promise<{ ok: boolean; error?: string }> {
+	try {
+		const response = await fetch(`${API_URL}/api/auth/magic-link/callback`, {
+			method: 'POST',
+			headers: { 'Content-Type': 'application/json' },
+			body: JSON.stringify({ token })
+		});
+
+		const data = await response.json();
+
+		if (!response.ok) {
+			return { ok: false, error: data.error || data.message || 'Magic link authentication failed' };
+		}
+
+		setAuth(
+			data.token,
+			{ id: data.user.id, email: data.user.email },
+			data.organization_id,
+			data.role
+		);
+		return { ok: true };
+	} catch (e) {
+		return { ok: false, error: e instanceof Error ? e.message : 'Network error' };
+	}
+}
+
 let refreshInterval: ReturnType<typeof setInterval> | null = null;
 
 /**

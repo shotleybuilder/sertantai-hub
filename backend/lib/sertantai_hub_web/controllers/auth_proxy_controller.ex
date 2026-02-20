@@ -20,6 +20,14 @@ defmodule SertantaiHubWeb.AuthProxyController do
     proxy_post(conn, "/api/auth/refresh", params, auth_header(conn))
   end
 
+  def magic_link_request(conn, params) do
+    proxy_post(conn, "/api/auth/user/magic_link/request", params)
+  end
+
+  def magic_link_callback(conn, params) do
+    proxy_post(conn, "/api/auth/user/magic_link/callback", params)
+  end
+
   defp proxy_post(conn, path, body, headers \\ []) do
     url = auth_url() <> path
 

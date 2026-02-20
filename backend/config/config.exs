@@ -10,7 +10,8 @@ import Config
 config :sertantai_hub,
   ecto_repos: [SertantaiHub.Repo],
   ash_domains: [SertantaiHub.Api],
-  generators: [timestamp_type: :utc_datetime]
+  generators: [timestamp_type: :utc_datetime],
+  auth_service_url: "http://localhost:4000"
 
 # Configures the endpoint
 config :sertantai_hub, SertantaiHubWeb.Endpoint,
