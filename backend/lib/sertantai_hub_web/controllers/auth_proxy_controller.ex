@@ -28,6 +28,46 @@ defmodule SertantaiHubWeb.AuthProxyController do
     proxy_post(conn, "/api/auth/user/magic_link", params)
   end
 
+  def totp_status(conn, _params) do
+    proxy_get(conn, "/api/totp/status", auth_header(conn))
+  end
+
+  def totp_setup(conn, _params) do
+    proxy_post(conn, "/api/totp/setup", %{}, auth_header(conn))
+  end
+
+  def totp_enable(conn, params) do
+    proxy_post(conn, "/api/totp/enable", params, auth_header(conn))
+  end
+
+  def totp_disable(conn, params) do
+    proxy_post(conn, "/api/totp/disable", params, auth_header(conn))
+  end
+
+  defp proxy_get(conn, path, headers) do
+    url = auth_url() <> path
+
+    req_headers =
+      [{"content-type", "application/json"}] ++ headers
+
+    case Req.get(url, headers: req_headers, receive_timeout: 10_000) do
+      {:ok, %Req.Response{status: status, body: resp_body}} ->
+        conn
+        |> put_status(status)
+        |> json(resp_body)
+
+      {:error, %Req.TransportError{reason: reason}} ->
+        conn
+        |> put_status(502)
+        |> json(%{status: "error", message: "Auth service unavailable", reason: inspect(reason)})
+
+      {:error, reason} ->
+        conn
+        |> put_status(502)
+        |> json(%{status: "error", message: "Auth service error", reason: inspect(reason)})
+    end
+  end
+
   defp proxy_post(conn, path, body, headers \\ []) do
     url = auth_url() <> path
 

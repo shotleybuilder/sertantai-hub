@@ -86,4 +86,54 @@ defmodule SertantaiHubWeb.AuthProxyControllerTest do
       assert conn.status in [200, 401, 403, 500, 502]
     end
   end
+
+  describe "GET /api/auth/totp/status" do
+    test "proxies to auth service and returns JSON", %{conn: conn} do
+      conn =
+        conn
+        |> put_req_header("authorization", "Bearer fake-token")
+        |> get("/api/auth/totp/status")
+
+      assert json_response(conn, conn.status)
+      assert conn.status in [200, 401, 500, 502]
+    end
+  end
+
+  describe "POST /api/auth/totp/setup" do
+    test "proxies to auth service and returns JSON", %{conn: conn} do
+      conn =
+        conn
+        |> put_req_header("authorization", "Bearer fake-token")
+        |> post("/api/auth/totp/setup")
+
+      assert json_response(conn, conn.status)
+      assert conn.status in [200, 401, 500, 502]
+    end
+  end
+
+  describe "POST /api/auth/totp/enable" do
+    test "proxies to auth service and returns JSON", %{conn: conn} do
+      conn =
+        conn
+        |> put_req_header("authorization", "Bearer fake-token")
+        |> put_req_header("content-type", "application/json")
+        |> post("/api/auth/totp/enable", %{code: "000000"})
+
+      assert json_response(conn, conn.status)
+      assert conn.status in [200, 400, 401, 500, 502]
+    end
+  end
+
+  describe "POST /api/auth/totp/disable" do
+    test "proxies to auth service and returns JSON", %{conn: conn} do
+      conn =
+        conn
+        |> put_req_header("authorization", "Bearer fake-token")
+        |> put_req_header("content-type", "application/json")
+        |> post("/api/auth/totp/disable", %{code: "000000"})
+
+      assert json_response(conn, conn.status)
+      assert conn.status in [200, 400, 401, 500, 502]
+    end
+  end
 end

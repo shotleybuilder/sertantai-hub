@@ -12,6 +12,8 @@
 			{#if $authStore.isAuthenticated}
 				<div class="flex items-center space-x-4">
 					<a href="/dashboard" class="text-sm text-gray-600 hover:text-gray-900">Dashboard</a>
+					<a href="/settings/security" class="text-sm text-gray-600 hover:text-gray-900">Settings</a
+					>
 					<div class="text-sm text-gray-500">
 						{$authStore.user?.email}
 					</div>

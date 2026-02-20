@@ -27,5 +27,11 @@ defmodule SertantaiHubWeb.Router do
     post("/refresh", AuthProxyController, :refresh)
     post("/magic-link/request", AuthProxyController, :magic_link_request)
     post("/magic-link/callback", AuthProxyController, :magic_link_callback)
+
+    # TOTP 2FA management
+    get("/totp/status", AuthProxyController, :totp_status)
+    post("/totp/setup", AuthProxyController, :totp_setup)
+    post("/totp/enable", AuthProxyController, :totp_enable)
+    post("/totp/disable", AuthProxyController, :totp_disable)
   end
 end
