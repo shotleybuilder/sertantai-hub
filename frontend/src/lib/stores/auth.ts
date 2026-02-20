@@ -182,7 +182,7 @@ export async function requestMagicLink(email: string): Promise<{ ok: boolean; er
 		const response = await fetch(`${API_URL}/api/auth/magic-link/request`, {
 			method: 'POST',
 			headers: { 'Content-Type': 'application/json' },
-			body: JSON.stringify({ email })
+			body: JSON.stringify({ user: { email } })
 		});
 
 		const data = await response.json();

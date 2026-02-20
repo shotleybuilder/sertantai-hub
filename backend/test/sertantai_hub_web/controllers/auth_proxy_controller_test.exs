@@ -60,4 +60,30 @@ defmodule SertantaiHubWeb.AuthProxyControllerTest do
       assert conn.status in [200, 401, 404, 500, 502]
     end
   end
+
+  describe "POST /api/auth/magic-link/request" do
+    test "proxies to auth service and returns JSON", %{conn: conn} do
+      conn =
+        conn
+        |> put_req_header("content-type", "application/json")
+        |> post("/api/auth/magic-link/request", %{
+          user: %{email: "magic-test@example.com"}
+        })
+
+      assert json_response(conn, conn.status)
+      assert conn.status in [200, 401, 422, 429, 500, 502]
+    end
+  end
+
+  describe "POST /api/auth/magic-link/callback" do
+    test "proxies to auth service and returns JSON", %{conn: conn} do
+      conn =
+        conn
+        |> put_req_header("content-type", "application/json")
+        |> post("/api/auth/magic-link/callback", %{token: "fake-magic-link-token"})
+
+      assert json_response(conn, conn.status)
+      assert conn.status in [200, 401, 403, 500, 502]
+    end
+  end
 end
