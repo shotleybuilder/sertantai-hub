@@ -37,6 +37,12 @@
 
 		if (result.ok) {
 			goto('/dashboard');
+		} else if (result.totpRequired && result.sessionToken) {
+			const params = new URLSearchParams({
+				session_token: result.sessionToken,
+				email: result.email || email
+			});
+			goto(`/auth/totp-challenge?${params.toString()}`);
 		} else {
 			error = result.error || 'Login failed';
 		}

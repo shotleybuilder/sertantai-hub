@@ -33,5 +33,7 @@ defmodule SertantaiHubWeb.Router do
     post("/totp/setup", AuthProxyController, :totp_setup)
     post("/totp/enable", AuthProxyController, :totp_enable)
     post("/totp/disable", AuthProxyController, :totp_disable)
+    post("/totp/challenge", AuthProxyController, :totp_challenge)
+    post("/totp/recover", AuthProxyController, :totp_recover)
   end
 end

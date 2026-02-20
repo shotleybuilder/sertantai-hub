@@ -44,6 +44,14 @@ defmodule SertantaiHubWeb.AuthProxyController do
     proxy_post(conn, "/api/totp/disable", params, auth_header(conn))
   end
 
+  def totp_challenge(conn, params) do
+    proxy_post(conn, "/api/totp/challenge", params)
+  end
+
+  def totp_recover(conn, params) do
+    proxy_post(conn, "/api/totp/recover", params)
+  end
+
   defp proxy_get(conn, path, headers) do
     url = auth_url() <> path
 

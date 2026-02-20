@@ -136,4 +136,31 @@ defmodule SertantaiHubWeb.AuthProxyControllerTest do
       assert conn.status in [200, 400, 401, 500, 502]
     end
   end
+
+  describe "POST /api/auth/totp/challenge" do
+    test "proxies to auth service and returns JSON", %{conn: conn} do
+      conn =
+        conn
+        |> put_req_header("content-type", "application/json")
+        |> post("/api/auth/totp/challenge", %{session_token: "fake-session-token", code: "000000"})
+
+      assert json_response(conn, conn.status)
+      assert conn.status in [200, 400, 401, 429, 500, 502]
+    end
+  end
+
+  describe "POST /api/auth/totp/recover" do
+    test "proxies to auth service and returns JSON", %{conn: conn} do
+      conn =
+        conn
+        |> put_req_header("content-type", "application/json")
+        |> post("/api/auth/totp/recover", %{
+          session_token: "fake-session-token",
+          backup_code: "ABCD1234"
+        })
+
+      assert json_response(conn, conn.status)
+      assert conn.status in [200, 400, 401, 429, 500, 502]
+    end
+  end
 end

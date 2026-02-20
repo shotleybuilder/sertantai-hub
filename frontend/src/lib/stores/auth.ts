@@ -90,13 +90,19 @@ export async function register(
 	}
 }
 
+export interface LoginResult {
+	ok: boolean;
+	error?: string;
+	totpRequired?: boolean;
+	sessionToken?: string;
+	email?: string;
+}
+
 /**
  * Login with email and password.
+ * Returns totpRequired + sessionToken if user has TOTP enabled.
  */
-export async function login(
-	email: string,
-	password: string
-): Promise<{ ok: boolean; error?: string }> {
+export async function login(email: string, password: string): Promise<LoginResult> {
 	try {
 		const response = await fetch(`${API_URL}/api/auth/login`, {
 			method: 'POST',
@@ -110,6 +116,15 @@ export async function login(
 			return { ok: false, error: data.error || data.message || 'Login failed' };
 		}
 
+		if (data.status === 'totp_required') {
+			return {
+				ok: false,
+				totpRequired: true,
+				sessionToken: data.session_token,
+				email: data.user?.email || email
+			};
+		}
+
 		setAuth(
 			data.token,
 			{ id: data.user.id, email: data.user.email },
@@ -117,6 +132,70 @@ export async function login(
 			data.role
 		);
 		return { ok: true };
+	} catch (e) {
+		return { ok: false, error: e instanceof Error ? e.message : 'Network error' };
+	}
+}
+
+/**
+ * Complete TOTP challenge with a 6-digit code.
+ */
+export async function completeTotpChallenge(
+	sessionToken: string,
+	code: string
+): Promise<{ ok: boolean; error?: string }> {
+	try {
+		const response = await fetch(`${API_URL}/api/auth/totp/challenge`, {
+			method: 'POST',
+			headers: { 'Content-Type': 'application/json' },
+			body: JSON.stringify({ session_token: sessionToken, code })
+		});
+
+		const data = await response.json();
+
+		if (!response.ok) {
+			return { ok: false, error: data.error || data.message || 'Invalid code' };
+		}
+
+		setAuth(
+			data.token,
+			{ id: data.user.id, email: data.user.email },
+			data.organization_id,
+			data.role
+		);
+		return { ok: true };
+	} catch (e) {
+		return { ok: false, error: e instanceof Error ? e.message : 'Network error' };
+	}
+}
+
+/**
+ * Complete TOTP recovery with a backup code.
+ */
+export async function completeTotpRecovery(
+	sessionToken: string,
+	backupCode: string
+): Promise<{ ok: boolean; error?: string; backupCodesRemaining?: number }> {
+	try {
+		const response = await fetch(`${API_URL}/api/auth/totp/recover`, {
+			method: 'POST',
+			headers: { 'Content-Type': 'application/json' },
+			body: JSON.stringify({ session_token: sessionToken, backup_code: backupCode })
+		});
+
+		const data = await response.json();
+
+		if (!response.ok) {
+			return { ok: false, error: data.error || data.message || 'Invalid backup code' };
+		}
+
+		setAuth(
+			data.token,
+			{ id: data.user.id, email: data.user.email },
+			data.organization_id,
+			data.role
+		);
+		return { ok: true, backupCodesRemaining: data.backup_codes_remaining };
 	} catch (e) {
 		return { ok: false, error: e instanceof Error ? e.message : 'Network error' };
 	}
