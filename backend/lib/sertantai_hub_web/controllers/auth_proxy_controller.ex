@@ -1,7 +1,8 @@
 defmodule SertantaiHubWeb.AuthProxyController do
   use SertantaiHubWeb, :controller
 
-  @auth_url Application.compile_env(:sertantai_hub, :auth_service_url, "http://localhost:4000")
+  defp auth_url,
+    do: Application.get_env(:sertantai_hub, :auth_service_url, "http://localhost:4000")
 
   def register(conn, params) do
     proxy_post(conn, "/api/auth/user/password/register", params)
@@ -20,7 +21,7 @@ defmodule SertantaiHubWeb.AuthProxyController do
   end
 
   defp proxy_post(conn, path, body, headers \\ []) do
-    url = @auth_url <> path
+    url = auth_url() <> path
 
     req_headers =
       [{"content-type", "application/json"}] ++ headers

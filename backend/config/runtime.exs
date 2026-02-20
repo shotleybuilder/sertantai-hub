@@ -66,6 +66,11 @@ if config_env() == :prod do
     ],
     secret_key_base: secret_key_base
 
+  config :sertantai_hub, :cors_origins, System.get_env("FRONTEND_URL") |> List.wrap()
+
+  config :sertantai_hub,
+    auth_service_url: System.get_env("AUTH_SERVICE_URL") || "http://localhost:4000"
+
   # ## SSL Support
   #
   # To get SSL working, you will need to add the `https` key

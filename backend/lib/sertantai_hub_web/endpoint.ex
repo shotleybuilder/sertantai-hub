@@ -53,18 +53,26 @@ defmodule SertantaiHubWeb.Endpoint do
   plug(Plug.Session, @session_options)
 
   # CORS configuration
+  # Origins are resolved at runtime via init/1 so that FRONTEND_URL
+  # from runtime.exs (or the environment) is picked up in releases.
   plug(Corsica,
-    origins: [
-      "http://localhost:5173",
-      "https://localhost:5173",
-      "http://127.0.0.1:5173",
-      "https://127.0.0.1:5173",
-      System.get_env("FRONTEND_URL") || ""
-    ],
+    origins: {__MODULE__, :cors_origins, []},
     allow_credentials: true,
     allow_headers: ["content-type", "authorization"],
     max_age: 600
   )
+
+  @dev_origins [
+    "http://localhost:5173",
+    "https://localhost:5173",
+    "http://127.0.0.1:5173",
+    "https://127.0.0.1:5173"
+  ]
+
+  def cors_origins(_conn, origin) do
+    prod_origins = Application.get_env(:sertantai_hub, :cors_origins, [])
+    origin in (@dev_origins ++ prod_origins)
+  end
 
   plug(SertantaiHubWeb.Router)
 end
