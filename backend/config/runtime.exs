@@ -71,6 +71,18 @@ if config_env() == :prod do
   config :sertantai_hub,
     auth_service_url: System.get_env("AUTH_SERVICE_URL") || "http://localhost:4000"
 
+  # Require AUTH_URL in production — JwksClient fetches the EdDSA public key from it
+  unless System.get_env("AUTH_URL") do
+    raise """
+    environment variable AUTH_URL is missing.
+    This is required for fetching the JWKS public key from sertantai-auth.
+    Example: http://sertantai-auth:4001
+    """
+  end
+
+  config :sertantai_hub,
+    auth_url: System.get_env("AUTH_URL")
+
   # ## SSL Support
   #
   # To get SSL working, you will need to add the `https` key

@@ -12,8 +12,9 @@ defmodule SertantaiHub.Application do
       SertantaiHub.Repo,
       {DNSCluster, query: Application.get_env(:sertantai_hub, :dns_cluster_query) || :ignore},
       {Phoenix.PubSub, name: SertantaiHub.PubSub},
-      # Start a worker by calling: SertantaiHub.Worker.start_link(arg)
-      # {SertantaiHub.Worker, arg},
+      # JWKS client — fetches EdDSA public key from sertantai-auth for JWT verification
+      # In test mode, skips HTTP fetch — tests call set_test_key/1 instead
+      SertantaiHub.Auth.JwksClient,
       # Start to serve requests, typically the last entry
       SertantaiHubWeb.Endpoint
     ]

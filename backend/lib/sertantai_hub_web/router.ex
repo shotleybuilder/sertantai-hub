@@ -5,6 +5,13 @@ defmodule SertantaiHubWeb.Router do
     plug(:accepts, ["json"])
   end
 
+  # Authenticated API pipeline — validates JWT from sertantai-auth
+  pipeline :api_authenticated do
+    plug(:accepts, ["json"])
+    plug(SertantaiHubWeb.LoadFromCookie)
+    plug(SertantaiHubWeb.AuthPlug)
+  end
+
   # Health check endpoints (no /api prefix, no authentication required)
   scope "/", SertantaiHubWeb do
     pipe_through(:api)

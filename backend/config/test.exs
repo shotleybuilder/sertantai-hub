@@ -26,3 +26,12 @@ config :logger, level: :warning
 
 # Initialize plugs at runtime for faster test compilation
 config :phoenix, :plug_init_mode, :runtime
+
+# Enable test mode for HTTP client mocking
+config :sertantai_hub, test_mode: true
+
+# Auth + JWKS config for tests
+# jwks_req_plug routes JWKS HTTP calls through Req.Test stubs
+config :sertantai_hub,
+  auth_url: "http://localhost:4000",
+  jwks_req_plug: {Req.Test, SertantaiHub.Auth.JwksClient}

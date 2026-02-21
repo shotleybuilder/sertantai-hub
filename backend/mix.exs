@@ -48,6 +48,9 @@ defmodule SertantaiHub.MixProject do
       {:corsica, "~> 2.1"},
       {:req, "~> 0.5"},
 
+      # JWT validation
+      {:jose, "~> 1.11"},
+
       # Ash Framework
       {:ash, "~> 3.0"},
       {:ash_postgres, "~> 2.0"},
