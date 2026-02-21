@@ -18,6 +18,9 @@
 - [x] Clean up .env.example (remove GUARDIAN/TOKEN_SIGNING_SECRET placeholders)
 - [x] Run mix test (35 pass), mix credo (no issues), mix format (clean)
 
+**Ended**: 2026-02-21
+**Committed**: be31da2
+
 ## Notes
 - Hub was proxy-only: AuthProxyController forwards to sertantai-auth, no JWT validation
 - Added EdDSA/JWKS infrastructure matching sertantai-legal reference impl
