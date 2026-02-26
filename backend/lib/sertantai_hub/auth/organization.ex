@@ -24,12 +24,18 @@ defmodule SertantaiHub.Auth.Organization do
       allow_nil?(false)
     end
 
+    attribute :tier, :atom do
+      constraints(one_of: [:blanket_bog, :heathland, :ancient_woodland])
+      default(:blanket_bog)
+      allow_nil?(false)
+    end
+
     create_timestamp(:inserted_at)
     update_timestamp(:updated_at)
   end
 
   relationships do
-    has_many :users, SertantaiHub.Auth.User
+    has_many(:users, SertantaiHub.Auth.User)
   end
 
   actions do

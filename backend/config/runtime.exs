@@ -20,6 +20,11 @@ if System.get_env("PHX_SERVER") do
   config :sertantai_hub, SertantaiHubWeb.Endpoint, server: true
 end
 
+# Webhook API key — used in all environments, overridable via env var
+if System.get_env("WEBHOOK_API_KEY") do
+  config :sertantai_hub, webhook_api_key: System.get_env("WEBHOOK_API_KEY")
+end
+
 if config_env() == :prod do
   # Production uses DATABASE_URL (standard for most hosting platforms)
   database_url =

@@ -12,6 +12,12 @@ defmodule SertantaiHubWeb.Router do
     plug(SertantaiHubWeb.AuthPlug)
   end
 
+  # Webhook pipeline — validates shared API key from trusted services
+  pipeline :webhook_authenticated do
+    plug(:accepts, ["json"])
+    plug(SertantaiHubWeb.WebhookAuthPlug)
+  end
+
   # Health check endpoints (no /api prefix, no authentication required)
   scope "/", SertantaiHubWeb do
     pipe_through(:api)
@@ -23,6 +29,19 @@ defmodule SertantaiHubWeb.Router do
   scope "/api", SertantaiHubWeb do
     pipe_through(:api)
     get("/hello", HelloController, :index)
+  end
+
+  # Authenticated API endpoints — requires JWT
+  scope "/api", SertantaiHubWeb do
+    pipe_through(:api_authenticated)
+    resources("/subscriptions", SubscriptionController, except: [:new, :edit])
+    get("/notification-events", NotificationEventController, :index)
+  end
+
+  # Webhook endpoints — authenticated via API key
+  scope "/api/webhooks", SertantaiHubWeb do
+    pipe_through(:webhook_authenticated)
+    post("/law-change", WebhookController, :law_change)
   end
 
   # Auth proxy — forwards to sertantai-auth service

@@ -51,6 +51,13 @@ defmodule SertantaiHub.MixProject do
       # JWT validation
       {:jose, "~> 1.11"},
 
+      # Background jobs
+      {:oban, "~> 2.18"},
+
+      # Email
+      {:swoosh, "~> 1.16"},
+      {:phoenix_swoosh, "~> 1.2"},
+
       # Ash Framework
       {:ash, "~> 3.0"},
       {:ash_postgres, "~> 2.0"},

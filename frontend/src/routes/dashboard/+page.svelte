@@ -69,6 +69,89 @@
 			/>
 		</div>
 
+		<!-- Upgrade -->
+		<h2 class="text-lg font-semibold text-gray-900 mb-4">Explore Plans</h2>
+		<div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-12">
+			<a
+				href="/flower-meadow"
+				class="bg-white rounded-lg shadow p-5 hover:shadow-md transition-all duration-200 block border-l-4"
+				style="border-left-color: #6b21a8;"
+			>
+				<div class="flex items-start gap-3">
+					<div
+						style="background-color: #f3e8ff;"
+						class="w-10 h-10 rounded-lg flex items-center justify-center shrink-0"
+					>
+						<svg
+							style="color: #6b21a8;"
+							class="w-5 h-5"
+							fill="none"
+							stroke="currentColor"
+							viewBox="0 0 24 24"
+						>
+							<path
+								stroke-linecap="round"
+								stroke-linejoin="round"
+								stroke-width="2"
+								d="M13 10V3L4 14h7v7l9-11h-7z"
+							/>
+						</svg>
+					</div>
+					<div>
+						<h3 class="font-medium text-gray-900">Flower Meadow</h3>
+						<p class="text-sm text-gray-500 mt-1">
+							P2P micro-apps, offline AI, and data sovereignty. Your data on your device.
+						</p>
+						<span
+							style="background-color: #f3e8ff; color: #6b21a8;"
+							class="inline-flex items-center mt-2 px-2 py-0.5 rounded text-xs font-medium"
+						>
+							Professional
+						</span>
+					</div>
+				</div>
+			</a>
+			<a
+				href="/atlantic-rainforest"
+				class="bg-white rounded-lg shadow p-5 hover:shadow-md transition-all duration-200 block border-l-4"
+				style="border-left-color: #065f46;"
+			>
+				<div class="flex items-start gap-3">
+					<div
+						style="background-color: #d1fae5;"
+						class="w-10 h-10 rounded-lg flex items-center justify-center shrink-0"
+					>
+						<svg
+							style="color: #065f46;"
+							class="w-5 h-5"
+							fill="none"
+							stroke="currentColor"
+							viewBox="0 0 24 24"
+						>
+							<path
+								stroke-linecap="round"
+								stroke-linejoin="round"
+								stroke-width="2"
+								d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4"
+							/>
+						</svg>
+					</div>
+					<div>
+						<h3 class="font-medium text-gray-900">Atlantic Rainforest</h3>
+						<p class="text-sm text-gray-500 mt-1">
+							Sync compliance data into Baserow, NocoDB, or Grist. Build your own solutions.
+						</p>
+						<span
+							style="background-color: #d1fae5; color: #065f46;"
+							class="inline-flex items-center mt-2 px-2 py-0.5 rounded text-xs font-medium"
+						>
+							Enterprise
+						</span>
+					</div>
+				</div>
+			</a>
+		</div>
+
 		<!-- Account Admin -->
 		<h2 class="text-lg font-semibold text-gray-900 mb-4">Account Management</h2>
 		<div class="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -94,6 +177,32 @@
 					<div>
 						<h3 class="font-medium text-gray-900">Security</h3>
 						<p class="text-sm text-gray-500 mt-1">Manage two-factor authentication</p>
+					</div>
+				</div>
+			</a>
+
+			<!-- Notifications -->
+			<a
+				href="/settings/notifications"
+				class="bg-white rounded-lg shadow p-5 hover:shadow-md transition-all duration-200 block"
+			>
+				<div class="flex items-start gap-3">
+					<svg
+						class="w-6 h-6 text-blue-500 mt-0.5 shrink-0"
+						fill="none"
+						stroke="currentColor"
+						viewBox="0 0 24 24"
+					>
+						<path
+							stroke-linecap="round"
+							stroke-linejoin="round"
+							stroke-width="2"
+							d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"
+						/>
+					</svg>
+					<div>
+						<h3 class="font-medium text-gray-900">Notifications</h3>
+						<p class="text-sm text-gray-500 mt-1">Manage law change notification subscriptions</p>
 					</div>
 				</div>
 			</a>

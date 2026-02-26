@@ -34,4 +34,11 @@ config :sertantai_hub, test_mode: true
 # jwks_req_plug routes JWKS HTTP calls through Req.Test stubs
 config :sertantai_hub,
   auth_url: "http://localhost:4000",
-  jwks_req_plug: {Req.Test, SertantaiHub.Auth.JwksClient}
+  jwks_req_plug: {Req.Test, SertantaiHub.Auth.JwksClient},
+  webhook_api_key: "test-webhook-key"
+
+# Oban: manual testing mode (jobs don't execute automatically)
+config :sertantai_hub, Oban, testing: :manual
+
+# Swoosh: test adapter (captures emails for assertions)
+config :sertantai_hub, SertantaiHub.Mailer, adapter: Swoosh.Adapters.Test

@@ -15,6 +15,8 @@ defmodule SertantaiHub.Application do
       # JWKS client — fetches EdDSA public key from sertantai-auth for JWT verification
       # In test mode, skips HTTP fetch — tests call set_test_key/1 instead
       SertantaiHub.Auth.JwksClient,
+      # Oban background job processing
+      {Oban, Application.fetch_env!(:sertantai_hub, Oban)},
       # Start to serve requests, typically the last entry
       SertantaiHubWeb.Endpoint
     ]
