@@ -8,7 +8,17 @@
 	import { authStore, initialize } from '$lib/stores/auth';
 	import NavBar from '$lib/components/NavBar.svelte';
 
-	const publicPaths = ['/', '/login', '/register', '/auth/magic-link', '/auth/totp-challenge'];
+	const publicPaths = [
+		'/',
+		'/login',
+		'/register',
+		'/auth/magic-link',
+		'/auth/totp-challenge',
+		'/blanket-bog',
+		'/flower-meadow',
+		'/atlantic-rainforest',
+		'/pricing'
+	];
 	let ready = false;
 
 	onMount(async () => {
