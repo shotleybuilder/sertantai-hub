@@ -20,6 +20,9 @@
 #   --electric-clear-cache  Restart Electric and clear shape cache
 #   --migrate          Run database migrations
 #   --check-only       Only check status, don't deploy
+#   --check-auth       Check auth service health only
+#   --start-auth       Start/restart auth service before deploying hub
+#   --with-auth        Check auth, start if needed, then deploy hub
 #   --logs             Follow logs after deployment
 #   --help             Show this help message
 #
@@ -51,6 +54,8 @@ BACKEND_SERVICE="sertantai-hub"
 FRONTEND_SERVICE="sertantai-hub-frontend"
 ELECTRIC_CONTAINER="sertantai_hub_electric"
 ELECTRIC_COMPOSE_SERVICE="sertantai-hub-electric"
+AUTH_CONTAINER="sertantai_auth_app"
+AUTH_COMPOSE_SERVICE="sertantai-auth"
 SITE_URL="https://hub.sertantai.com"
 ELECTRIC_URL="${SITE_URL}/electric"
 BACKEND_PORT=4006
@@ -64,6 +69,9 @@ WITH_ELECTRIC=false
 ELECTRIC_CLEAR_CACHE=false
 RUN_MIGRATIONS=false
 CHECK_ONLY=false
+CHECK_AUTH=false
+START_AUTH=false
+WITH_AUTH=false
 FOLLOW_LOGS=false
 
 while [[ $# -gt 0 ]]; do
@@ -108,6 +116,20 @@ while [[ $# -gt 0 ]]; do
             CHECK_ONLY=true
             shift
             ;;
+        --check-auth)
+            CHECK_AUTH=true
+            DEPLOY_FRONTEND=false
+            DEPLOY_BACKEND=false
+            shift
+            ;;
+        --start-auth)
+            START_AUTH=true
+            shift
+            ;;
+        --with-auth)
+            WITH_AUTH=true
+            shift
+            ;;
         --logs)
             FOLLOW_LOGS=true
             shift
@@ -124,6 +146,9 @@ while [[ $# -gt 0 ]]; do
             echo "  --electric-clear-cache  Restart Electric and clear shape cache"
             echo "  --migrate          Run database migrations"
             echo "  --check-only       Only check status, don't deploy"
+            echo "  --check-auth       Check auth service health only"
+            echo "  --start-auth       Start/restart auth service before deploying"
+            echo "  --with-auth        Check auth, start if needed, then deploy"
             echo "  --logs             Follow logs after deployment"
             echo "  --help             Show this help message"
             echo ""
@@ -133,7 +158,13 @@ while [[ $# -gt 0 ]]; do
             echo "  Backend:       ${BACKEND_SERVICE}"
             echo "  Frontend:      ${FRONTEND_SERVICE}"
             echo "  Electric:      ${ELECTRIC_CONTAINER}"
+            echo "  Auth:          ${AUTH_CONTAINER}"
             echo "  URL:           ${SITE_URL}"
+            echo ""
+            echo "Auth Service Notes:"
+            echo "  - Hub depends on auth for JWT validation (JWKS) and login/register proxy"
+            echo "  - Auth should be running before hub backend starts"
+            echo "  - Use --with-auth to ensure auth is healthy before deploying hub"
             echo ""
             echo "ElectricSQL Notes:"
             echo "  - Uses 'docker restart' for safe restarts (preserves database)"
@@ -195,6 +226,72 @@ echo -e "${GREEN}✓ SSH connection OK${NC}"
 echo ""
 
 # ============================================================
+# AUTH SERVICE HELPER FUNCTIONS
+# ============================================================
+
+check_auth_health() {
+    local AUTH_STATUS
+    AUTH_STATUS=$(ssh "${SERVER}" "docker inspect --format='{{.State.Health.Status}}' ${AUTH_CONTAINER}" 2>/dev/null || echo "not_found")
+
+    if [ "$AUTH_STATUS" = "healthy" ]; then
+        echo -e "${GREEN}✓ Auth service is healthy${NC}"
+        return 0
+    elif [ "$AUTH_STATUS" = "not_found" ]; then
+        echo -e "${RED}✗ Auth container not found (${AUTH_CONTAINER})${NC}"
+        return 1
+    else
+        echo -e "${YELLOW}⚠ Auth health status: ${AUTH_STATUS}${NC}"
+        return 1
+    fi
+}
+
+start_auth_service() {
+    echo -e "${BLUE}Starting auth service...${NC}"
+    if ssh "${SERVER}" "cd ${DEPLOY_PATH} && docker compose up -d ${AUTH_COMPOSE_SERVICE}"; then
+        echo -e "${GREEN}✓ Auth container started${NC}"
+    else
+        echo -e "${RED}✗ Failed to start auth container${NC}"
+        return 1
+    fi
+
+    echo -e "${BLUE}Waiting for auth to become healthy...${NC}"
+    for i in 1 2 3 4 5 6; do
+        sleep 5
+        local AUTH_STATUS
+        AUTH_STATUS=$(ssh "${SERVER}" "docker inspect --format='{{.State.Health.Status}}' ${AUTH_CONTAINER}" 2>/dev/null || echo "not_found")
+        if [ "$AUTH_STATUS" = "healthy" ]; then
+            echo -e "${GREEN}✓ Auth service is healthy${NC}"
+            return 0
+        fi
+        echo -e "${YELLOW}  Attempt ${i}/6: status=${AUTH_STATUS} — retrying in 5s...${NC}"
+    done
+    echo -e "${RED}✗ Auth service did not become healthy in 30s${NC}"
+    return 1
+}
+
+# ============================================================
+# CHECK-AUTH-ONLY MODE
+# ============================================================
+if [ "$CHECK_AUTH" = true ]; then
+    echo -e "${BLUE}Checking auth service status...${NC}"
+    echo ""
+
+    echo -e "${BLUE}Auth Container Status:${NC}"
+    ssh "${SERVER}" "docker ps --filter name=${AUTH_CONTAINER} --format 'table {{.Names}}\t{{.Status}}\t{{.Ports}}'" 2>/dev/null || echo "  Auth container not found"
+    echo ""
+
+    check_auth_health
+    echo ""
+
+    echo -e "${BLUE}Recent Auth Logs:${NC}"
+    ssh "${SERVER}" "cd ${DEPLOY_PATH} && docker compose logs --tail=15 ${AUTH_COMPOSE_SERVICE}" 2>/dev/null || echo "  No logs available"
+
+    echo ""
+    echo -e "${GREEN}Auth check complete${NC}"
+    exit 0
+fi
+
+# ============================================================
 # CHECK-ONLY MODE
 # ============================================================
 if [ "$CHECK_ONLY" = true ]; then
@@ -220,6 +317,11 @@ if [ "$CHECK_ONLY" = true ]; then
     fi
     echo ""
 
+    echo -e "${BLUE}Auth Service Status:${NC}"
+    ssh "${SERVER}" "docker ps --filter name=${AUTH_CONTAINER} --format 'table {{.Names}}\t{{.Status}}\t{{.Ports}}'" 2>/dev/null || echo "  Auth container not found"
+    check_auth_health || true
+    echo ""
+
     echo -e "${BLUE}Recent Backend Logs:${NC}"
     ssh "${SERVER}" "cd ${DEPLOY_PATH} && docker compose logs --tail=15 ${BACKEND_SERVICE}" 2>/dev/null || echo "  No logs available"
 
@@ -232,6 +334,37 @@ fi
 FRONTEND_SUCCESS=true
 BACKEND_SUCCESS=true
 ELECTRIC_SUCCESS=true
+AUTH_SUCCESS=true
+
+# ============================================================
+# AUTH SERVICE PRE-CHECK
+# ============================================================
+if [ "$START_AUTH" = true ] || [ "$WITH_AUTH" = true ]; then
+    echo -e "${BLUE}┌─────────────────────────────────────────────────────────┐${NC}"
+    echo -e "${BLUE}│  Auth Service Pre-Check                                 │${NC}"
+    echo -e "${BLUE}└─────────────────────────────────────────────────────────┘${NC}"
+    echo ""
+
+    if check_auth_health 2>/dev/null; then
+        if [ "$START_AUTH" = true ]; then
+            echo -e "${YELLOW}Auth is already healthy. Restarting as requested...${NC}"
+            start_auth_service || AUTH_SUCCESS=false
+        else
+            echo -e "${GREEN}✓ Auth service is already healthy${NC}"
+        fi
+    else
+        echo -e "${YELLOW}Auth service is not healthy. Starting...${NC}"
+        start_auth_service || AUTH_SUCCESS=false
+    fi
+    echo ""
+
+    if [ "$AUTH_SUCCESS" = false ]; then
+        echo -e "${RED}✗ Auth service could not be started${NC}"
+        echo -e "${YELLOW}  Hub backend depends on auth for JWT validation and login proxy${NC}"
+        echo -e "${YELLOW}  Continuing deployment — hub will retry JWKS fetch every 30s${NC}"
+        echo ""
+    fi
+fi
 
 # ============================================================
 # DEPLOY FRONTEND (Docker container - pull and restart)

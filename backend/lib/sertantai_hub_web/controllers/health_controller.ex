@@ -35,7 +35,8 @@ defmodule SertantaiHubWeb.HealthController do
       timestamp: DateTime.utc_now() |> DateTime.to_iso8601(),
       checks: %{
         database: check_database(),
-        application: check_application()
+        application: check_application(),
+        auth_service: check_auth_service()
       }
     }
 
@@ -72,6 +73,44 @@ defmodule SertantaiHubWeb.HealthController do
       node: Node.self(),
       otp_release: :erlang.system_info(:otp_release) |> to_string(),
       elixir_version: System.version()
+    }
+  end
+
+  defp check_auth_service do
+    jwks_status =
+      case SertantaiHub.Auth.JwksClient.public_key() do
+        {:ok, _} -> %{status: "healthy", message: "JWKS public key cached"}
+        {:error, :no_key} -> %{status: "unhealthy", message: "JWKS public key not available"}
+      end
+
+    auth_url = Application.get_env(:sertantai_hub, :auth_service_url, "http://localhost:4000")
+
+    reachable_status =
+      try do
+        case Req.get("#{auth_url}/health", receive_timeout: 2_000, retry: false) do
+          {:ok, %Req.Response{status: 200}} ->
+            %{status: "healthy", message: "Auth service reachable"}
+
+          {:ok, %Req.Response{status: status}} ->
+            %{status: "unhealthy", message: "Auth service returned status #{status}"}
+
+          {:error, reason} ->
+            %{status: "unhealthy", message: "Auth service unreachable: #{inspect(reason)}"}
+        end
+      rescue
+        error ->
+          %{status: "unhealthy", message: "Auth service error: #{inspect(error)}"}
+      end
+
+    overall =
+      if jwks_status.status == "healthy" and reachable_status.status == "healthy",
+        do: "healthy",
+        else: "unhealthy"
+
+    %{
+      status: overall,
+      jwks: jwks_status,
+      reachable: reachable_status
     }
   end
 
