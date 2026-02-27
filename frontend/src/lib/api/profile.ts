@@ -43,7 +43,7 @@ export async function updateProfile(params: {
 	try {
 		const response = await apiFetch('/api/auth/profile', {
 			method: 'PATCH',
-			body: JSON.stringify(params)
+			body: JSON.stringify({ user: params })
 		});
 		const data = await response.json();
 		if (!response.ok) {
