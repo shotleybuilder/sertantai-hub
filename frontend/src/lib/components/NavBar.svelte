@@ -1,5 +1,7 @@
 <script lang="ts">
 	import { authStore, logout } from '$lib/stores/auth';
+
+	let plansOpen = false;
 </script>
 
 <nav class="bg-white border-b border-gray-200">
@@ -14,6 +16,38 @@
 					<a href="/dashboard" class="text-sm text-gray-600 hover:text-gray-900">Dashboard</a>
 					<a href="/settings/security" class="text-sm text-gray-600 hover:text-gray-900">Settings</a
 					>
+					<div class="relative">
+						<button
+							on:click={() => (plansOpen = !plansOpen)}
+							on:blur={() => setTimeout(() => (plansOpen = false), 150)}
+							class="text-sm text-gray-600 hover:text-gray-900 flex items-center gap-1"
+						>
+							Plans
+							<svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+								<path
+									stroke-linecap="round"
+									stroke-linejoin="round"
+									stroke-width="2"
+									d="M19 9l-7 7-7-7"
+								/>
+							</svg>
+						</button>
+						{#if plansOpen}
+							<div
+								class="absolute top-full left-0 mt-1 w-48 bg-white rounded-md shadow-lg border border-gray-200 py-1 z-50"
+							>
+								<a
+									href="/flower-meadow"
+									class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Flower Meadow</a
+								>
+								<a
+									href="/atlantic-rainforest"
+									class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+									>Atlantic Rainforest</a
+								>
+							</div>
+						{/if}
+					</div>
 					<div class="text-sm text-gray-500">
 						{$authStore.user?.email}
 					</div>

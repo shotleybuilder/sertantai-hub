@@ -19,6 +19,32 @@
 	<div class="max-w-5xl mx-auto px-4 py-12">
 		<h1 class="text-3xl font-bold text-gray-900 mb-8">Dashboard</h1>
 
+		<!-- Services -->
+		<h2 class="text-lg font-semibold text-gray-900 mb-4">Services</h2>
+		<div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-12">
+			<ServiceTile
+				name="Legal"
+				description="UK legal registers"
+				url="{LEGAL_URL}/browse"
+				healthUrl="{API_URL}/api/services/legal/health"
+				tier={subscriptions.legal}
+			/>
+			<ServiceTile
+				name="Enforcement"
+				description="Regulatory enforcement data"
+				url={ENFORCEMENT_URL}
+				healthUrl="{API_URL}/api/services/enforcement/health"
+				tier={subscriptions.enforcement}
+			/>
+			<ServiceTile
+				name="Controls"
+				description="Compliance management tools"
+				url={CONTROLS_URL}
+				healthUrl="{API_URL}/api/services/controls/health"
+				tier={subscriptions.controls}
+			/>
+		</div>
+
 		<!-- Account Card -->
 		<div class="max-w-md bg-white rounded-lg shadow-lg p-6 mb-8">
 			<h2 class="text-lg font-semibold text-gray-900 mb-4">Your Account</h2>
@@ -50,115 +76,6 @@
 					</div>
 				{/if}
 			</div>
-		</div>
-
-		<!-- Services -->
-		<h2 class="text-lg font-semibold text-gray-900 mb-4">Services</h2>
-		<div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-12">
-			<ServiceTile
-				name="Legal"
-				description="UK legal registers"
-				url="{LEGAL_URL}/browse"
-				healthUrl="{API_URL}/api/services/legal/health"
-				tier={subscriptions.legal}
-			/>
-			<ServiceTile
-				name="Enforcement"
-				description="Regulatory enforcement data"
-				url={ENFORCEMENT_URL}
-				healthUrl="{API_URL}/api/services/enforcement/health"
-				tier={subscriptions.enforcement}
-			/>
-			<ServiceTile
-				name="Controls"
-				description="Compliance management tools"
-				url={CONTROLS_URL}
-				healthUrl="{API_URL}/api/services/controls/health"
-				tier={subscriptions.controls}
-			/>
-		</div>
-
-		<!-- Upgrade -->
-		<h2 class="text-lg font-semibold text-gray-900 mb-4">Explore Plans</h2>
-		<div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-12">
-			<a
-				href="/flower-meadow"
-				class="bg-white rounded-lg shadow p-5 hover:shadow-md transition-all duration-200 block border-l-4"
-				style="border-left-color: #6b21a8;"
-			>
-				<div class="flex items-start gap-3">
-					<div
-						style="background-color: #f3e8ff;"
-						class="w-10 h-10 rounded-lg flex items-center justify-center shrink-0"
-					>
-						<svg
-							style="color: #6b21a8;"
-							class="w-5 h-5"
-							fill="none"
-							stroke="currentColor"
-							viewBox="0 0 24 24"
-						>
-							<path
-								stroke-linecap="round"
-								stroke-linejoin="round"
-								stroke-width="2"
-								d="M13 10V3L4 14h7v7l9-11h-7z"
-							/>
-						</svg>
-					</div>
-					<div>
-						<h3 class="font-medium text-gray-900">Flower Meadow</h3>
-						<p class="text-sm text-gray-500 mt-1">
-							P2P micro-apps, offline AI, and data sovereignty. Your data on your device.
-						</p>
-						<span
-							style="background-color: #f3e8ff; color: #6b21a8;"
-							class="inline-flex items-center mt-2 px-2 py-0.5 rounded text-xs font-medium"
-						>
-							Professional
-						</span>
-					</div>
-				</div>
-			</a>
-			<a
-				href="/atlantic-rainforest"
-				class="bg-white rounded-lg shadow p-5 hover:shadow-md transition-all duration-200 block border-l-4"
-				style="border-left-color: #065f46;"
-			>
-				<div class="flex items-start gap-3">
-					<div
-						style="background-color: #d1fae5;"
-						class="w-10 h-10 rounded-lg flex items-center justify-center shrink-0"
-					>
-						<svg
-							style="color: #065f46;"
-							class="w-5 h-5"
-							fill="none"
-							stroke="currentColor"
-							viewBox="0 0 24 24"
-						>
-							<path
-								stroke-linecap="round"
-								stroke-linejoin="round"
-								stroke-width="2"
-								d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4"
-							/>
-						</svg>
-					</div>
-					<div>
-						<h3 class="font-medium text-gray-900">Atlantic Rainforest</h3>
-						<p class="text-sm text-gray-500 mt-1">
-							Sync compliance data into Baserow, NocoDB, or Grist. Build your own solutions.
-						</p>
-						<span
-							style="background-color: #d1fae5; color: #065f46;"
-							class="inline-flex items-center mt-2 px-2 py-0.5 rounded text-xs font-medium"
-						>
-							Enterprise
-						</span>
-					</div>
-				</div>
-			</a>
 		</div>
 
 		<!-- Account Admin -->
