@@ -4,6 +4,13 @@ defmodule SertantaiHubWeb.AuthProxyController do
   defp auth_url,
     do: Application.get_env(:sertantai_hub, :auth_service_url, "http://localhost:4000")
 
+  defp req_opts do
+    case Application.get_env(:sertantai_hub, :auth_proxy_req_plug) do
+      nil -> []
+      plug -> [plug: plug]
+    end
+  end
+
   def register(conn, params) do
     proxy_post(conn, "/api/auth/user/password/register", params)
   end
@@ -17,7 +24,7 @@ defmodule SertantaiHubWeb.AuthProxyController do
   end
 
   def refresh(conn, params) do
-    proxy_post(conn, "/api/auth/refresh", params, auth_header(conn))
+    proxy_post(conn, "/api/refresh", params, auth_header(conn))
   end
 
   def magic_link_request(conn, params) do
@@ -57,7 +64,7 @@ defmodule SertantaiHubWeb.AuthProxyController do
   end
 
   def profile_update(conn, params) do
-    proxy_patch(conn, "/api/profile", %{"user" => params}, auth_header(conn))
+    proxy_patch(conn, "/api/profile", params, auth_header(conn))
   end
 
   def change_password(conn, params) do
@@ -70,7 +77,7 @@ defmodule SertantaiHubWeb.AuthProxyController do
     req_headers =
       [{"content-type", "application/json"}] ++ headers
 
-    case Req.get(url, headers: req_headers, receive_timeout: 10_000) do
+    case Req.get(url, [headers: req_headers, receive_timeout: 10_000] ++ req_opts()) do
       {:ok, %Req.Response{status: status, body: resp_body}} ->
         conn
         |> put_status(status)
@@ -94,7 +101,7 @@ defmodule SertantaiHubWeb.AuthProxyController do
     req_headers =
       [{"content-type", "application/json"}] ++ headers
 
-    case Req.patch(url, json: body, headers: req_headers, receive_timeout: 10_000) do
+    case Req.patch(url, [json: body, headers: req_headers, receive_timeout: 10_000] ++ req_opts()) do
       {:ok, %Req.Response{status: status, body: resp_body}} ->
         conn
         |> put_status(status)
@@ -118,7 +125,7 @@ defmodule SertantaiHubWeb.AuthProxyController do
     req_headers =
       [{"content-type", "application/json"}] ++ headers
 
-    case Req.post(url, json: body, headers: req_headers, receive_timeout: 10_000) do
+    case Req.post(url, [json: body, headers: req_headers, receive_timeout: 10_000] ++ req_opts()) do
       {:ok, %Req.Response{status: status, body: resp_body}} ->
         conn
         |> put_status(status)

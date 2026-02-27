@@ -127,10 +127,42 @@ defmodule SertantaiHubWeb.AuthProxyControllerTest do
       conn =
         conn
         |> put_auth_header()
-        |> patch("/api/auth/profile", %{name: "Test User"})
+        |> patch("/api/auth/profile", %{user: %{name: "Test User"}})
 
       assert json_response(conn, conn.status)
       assert conn.status in [200, 401, 422, 500, 502]
+    end
+
+    test "forwards user params without double-wrapping", %{conn: conn} do
+      # Temporarily enable Req.Test plug for the proxy
+      Application.put_env(:sertantai_hub, :auth_proxy_req_plug, {Req.Test, __MODULE__})
+      on_exit(fn -> Application.delete_env(:sertantai_hub, :auth_proxy_req_plug) end)
+
+      # Stub the auth service to capture the request body
+      test_pid = self()
+
+      Req.Test.stub(__MODULE__, fn conn ->
+        {:ok, body, conn} = Plug.Conn.read_body(conn)
+        send(test_pid, {:proxy_body, Jason.decode!(body)})
+
+        conn
+        |> Plug.Conn.put_resp_content_type("application/json")
+        |> Plug.Conn.send_resp(
+          200,
+          Jason.encode!(%{status: "success", user: %{name: "New Name"}})
+        )
+      end)
+
+      conn
+      |> put_auth_header()
+      |> put_req_header("content-type", "application/json")
+      |> patch("/api/auth/profile", %{user: %{name: "New Name"}})
+
+      assert_receive {:proxy_body, body}
+
+      # The auth service expects {"user": {"name": "..."}}, NOT {"user": {"user": {"name": "..."}}}
+      assert body == %{"user" => %{"name" => "New Name"}},
+             "Expected {\"user\": {\"name\": \"New Name\"}} but got: #{Jason.encode!(body)}"
     end
   end
 
