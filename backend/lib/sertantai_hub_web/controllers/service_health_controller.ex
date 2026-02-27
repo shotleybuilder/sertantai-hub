@@ -29,9 +29,18 @@ defmodule SertantaiHubWeb.ServiceHealthController do
   end
 
   defp check_health(conn, base_url) do
-    case Req.get("#{base_url}/health", receive_timeout: 3_000, retry: false) do
+    case Req.get("#{base_url}/health",
+           receive_timeout: 3_000,
+           retry: false,
+           redirect: false
+         ) do
       {:ok, %Req.Response{status: 200, body: body}} ->
         conn |> put_status(200) |> json(body)
+
+      {:ok, %Req.Response{status: status}} when status in [301, 302] ->
+        # Service is running but has force_ssl enabled, which redirects HTTP → HTTPS.
+        # A redirect proves the app is alive and responding.
+        conn |> put_status(200) |> json(%{status: "ok"})
 
       {:ok, %Req.Response{status: status}} ->
         conn |> put_status(200) |> json(%{status: "unhealthy", code: status})

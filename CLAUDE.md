@@ -46,6 +46,57 @@ docker-compose -f docker-compose.dev.yml down      # Stop services
 docker-compose -f docker-compose.dev.yml logs -f   # View logs
 ```
 
+### Deployment Commands
+
+**ALWAYS use the deployment scripts** in `scripts/deployment/`. Never manually run `docker build`/`docker push` with image names — the scripts have the correct GHCR image names (`ghcr.io/shotleybuilder/sertantai-hub-backend` and `ghcr.io/shotleybuilder/sertantai-hub-frontend`) and handle authentication via `GHCR_TOKEN`.
+
+**Build** (from project root):
+```bash
+./scripts/deployment/build-backend.sh              # Build backend Docker image
+./scripts/deployment/build-backend.sh --no-cache   # Build without cache
+./scripts/deployment/build-frontend.sh             # Build frontend Docker image
+./scripts/deployment/build-frontend.sh --no-cache  # Build without cache
+```
+
+**Push to GHCR** (from project root):
+```bash
+./scripts/deployment/push-backend.sh               # Push backend image
+./scripts/deployment/push-frontend.sh              # Push frontend image
+```
+
+**Deploy to production** (from project root):
+```bash
+./scripts/deployment/deploy-prod.sh                # Deploy both frontend + backend
+./scripts/deployment/deploy-prod.sh --backend      # Backend only
+./scripts/deployment/deploy-prod.sh --frontend     # Frontend only
+./scripts/deployment/deploy-prod.sh --check-only   # Check production status
+./scripts/deployment/deploy-prod.sh --with-auth    # Ensure auth is healthy, then deploy
+./scripts/deployment/deploy-prod.sh --migrate      # Run DB migrations after deploy
+./scripts/deployment/deploy-prod.sh --electric     # Restart ElectricSQL only
+./scripts/deployment/deploy-prod.sh --logs         # Follow logs after deploy
+```
+
+**Typical deployment workflow**:
+```bash
+# Backend-only change:
+./scripts/deployment/build-backend.sh && ./scripts/deployment/push-backend.sh && ./scripts/deployment/deploy-prod.sh --backend
+
+# Frontend-only change:
+./scripts/deployment/build-frontend.sh && ./scripts/deployment/push-frontend.sh && ./scripts/deployment/deploy-prod.sh --frontend
+
+# Full stack:
+./scripts/deployment/build-backend.sh && ./scripts/deployment/build-frontend.sh
+./scripts/deployment/push-backend.sh && ./scripts/deployment/push-frontend.sh
+./scripts/deployment/deploy-prod.sh
+```
+
+**Infrastructure changes** (docker-compose, env vars, nginx):
+- **NEVER edit files directly on the production server via SSH**
+- All server configuration lives in the local `~/Desktop/infrastructure` repo
+- Workflow: edit locally → commit → push → SSH to server → `cd ~/infrastructure/docker && git pull && docker compose up -d`
+- Environment variables on the server are the one exception — those are managed manually via SSH
+- This applies to docker-compose.yml, nginx configs, and any other server-side configuration
+
 ### Health Check Endpoints
 - Backend: http://localhost:4006/health
 - Backend detailed: http://localhost:4006/health/detailed
