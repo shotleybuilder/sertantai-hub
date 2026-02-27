@@ -2,12 +2,10 @@
 	import { authStore } from '$lib/stores/auth';
 	import ServiceTile from '$lib/components/ServiceTile.svelte';
 
+	const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:4006';
 	const LEGAL_URL = import.meta.env.VITE_LEGAL_URL || 'http://localhost:5175';
-	const LEGAL_API_URL = import.meta.env.VITE_LEGAL_API_URL || 'http://localhost:4003';
 	const ENFORCEMENT_URL = import.meta.env.VITE_ENFORCEMENT_URL || 'http://localhost:5174';
-	const ENFORCEMENT_API_URL = import.meta.env.VITE_ENFORCEMENT_API_URL || 'http://localhost:4001';
 	const CONTROLS_URL = import.meta.env.VITE_CONTROLS_URL || 'http://localhost:5176';
-	const CONTROLS_API_URL = import.meta.env.VITE_CONTROLS_API_URL || 'http://localhost:4004';
 
 	// Mock subscription data — replace with real data when backend supports it
 	const subscriptions = {
@@ -61,21 +59,21 @@
 				name="Legal"
 				description="UK legal registers"
 				url="{LEGAL_URL}/browse"
-				healthUrl="{LEGAL_API_URL}/health"
+				healthUrl="{API_URL}/api/services/legal/health"
 				tier={subscriptions.legal}
 			/>
 			<ServiceTile
 				name="Enforcement"
 				description="Regulatory enforcement data"
 				url={ENFORCEMENT_URL}
-				healthUrl="{ENFORCEMENT_API_URL}/health"
+				healthUrl="{API_URL}/api/services/enforcement/health"
 				tier={subscriptions.enforcement}
 			/>
 			<ServiceTile
 				name="Controls"
 				description="Compliance management tools"
 				url={CONTROLS_URL}
-				healthUrl="{CONTROLS_API_URL}/health"
+				healthUrl="{API_URL}/api/services/controls/health"
 				tier={subscriptions.controls}
 			/>
 		</div>

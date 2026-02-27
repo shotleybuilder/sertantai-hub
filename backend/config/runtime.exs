@@ -76,6 +76,19 @@ if config_env() == :prod do
   config :sertantai_hub,
     auth_service_url: System.get_env("AUTH_SERVICE_URL") || "http://localhost:4000"
 
+  # Micro-service URLs for server-side health checks
+  if url = System.get_env("LEGAL_SERVICE_URL") do
+    config :sertantai_hub, legal_url: url
+  end
+
+  if url = System.get_env("ENFORCEMENT_SERVICE_URL") do
+    config :sertantai_hub, enforcement_url: url
+  end
+
+  if url = System.get_env("CONTROLS_SERVICE_URL") do
+    config :sertantai_hub, controls_url: url
+  end
+
   # Require AUTH_URL in production — JwksClient fetches the EdDSA public key from it
   unless System.get_env("AUTH_URL") do
     raise """

@@ -29,6 +29,7 @@ defmodule SertantaiHubWeb.Router do
   scope "/api", SertantaiHubWeb do
     pipe_through(:api)
     get("/hello", HelloController, :index)
+    get("/services/:service/health", ServiceHealthController, :show)
   end
 
   # Authenticated API endpoints — requires JWT
