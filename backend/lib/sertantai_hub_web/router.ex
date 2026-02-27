@@ -44,7 +44,7 @@ defmodule SertantaiHubWeb.Router do
     post("/law-change", WebhookController, :law_change)
   end
 
-  # Auth proxy — forwards to sertantai-auth service
+  # Auth proxy — public endpoints (no JWT required)
   scope "/api/auth", SertantaiHubWeb do
     pipe_through(:api)
     post("/register", AuthProxyController, :register)
@@ -53,6 +53,13 @@ defmodule SertantaiHubWeb.Router do
     post("/refresh", AuthProxyController, :refresh)
     post("/magic-link/request", AuthProxyController, :magic_link_request)
     post("/magic-link/callback", AuthProxyController, :magic_link_callback)
+    post("/totp/challenge", AuthProxyController, :totp_challenge)
+    post("/totp/recover", AuthProxyController, :totp_recover)
+  end
+
+  # Auth proxy — authenticated endpoints (JWT required)
+  scope "/api/auth", SertantaiHubWeb do
+    pipe_through(:api_authenticated)
 
     # Profile management
     get("/profile", AuthProxyController, :profile_show)
@@ -64,7 +71,5 @@ defmodule SertantaiHubWeb.Router do
     post("/totp/setup", AuthProxyController, :totp_setup)
     post("/totp/enable", AuthProxyController, :totp_enable)
     post("/totp/disable", AuthProxyController, :totp_disable)
-    post("/totp/challenge", AuthProxyController, :totp_challenge)
-    post("/totp/recover", AuthProxyController, :totp_recover)
   end
 end

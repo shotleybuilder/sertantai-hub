@@ -1,10 +1,15 @@
 defmodule SertantaiHubWeb.AuthProxyControllerTest do
   use SertantaiHubWeb.ConnCase, async: true
 
+  import SertantaiHub.AuthHelpers
+
   # These tests verify the proxy routes exist and return JSON responses.
   # Results depend on whether sertantai-auth is running:
   #   - Auth running: forwards to auth service, returns auth response
   #   - Auth down: returns 502 with error message
+  #
+  # Authenticated endpoints (profile, TOTP management) additionally verify
+  # that requests without a valid JWT are rejected with 401.
 
   describe "POST /api/auth/register" do
     test "proxies to auth service and returns JSON", %{conn: conn} do
@@ -87,11 +92,82 @@ defmodule SertantaiHubWeb.AuthProxyControllerTest do
     end
   end
 
-  describe "GET /api/auth/totp/status" do
-    test "proxies to auth service and returns JSON", %{conn: conn} do
+  # ──────────────────────────────────────────────────────────────────
+  # Authenticated endpoints — require valid JWT
+  # ──────────────────────────────────────────────────────────────────
+
+  describe "GET /api/auth/profile" do
+    setup :setup_auth
+
+    test "returns 401 without auth", %{conn: conn} do
+      conn = get(conn, "/api/auth/profile")
+      assert json_response(conn, 401)
+    end
+
+    test "proxies to auth service with valid token", %{conn: conn} do
       conn =
         conn
-        |> put_req_header("authorization", "Bearer fake-token")
+        |> put_auth_header()
+        |> get("/api/auth/profile")
+
+      assert json_response(conn, conn.status)
+      assert conn.status in [200, 401, 500, 502]
+    end
+  end
+
+  describe "PATCH /api/auth/profile" do
+    setup :setup_auth
+
+    test "returns 401 without auth", %{conn: conn} do
+      conn = patch(conn, "/api/auth/profile", %{name: "Test"})
+      assert json_response(conn, 401)
+    end
+
+    test "proxies to auth service with valid token", %{conn: conn} do
+      conn =
+        conn
+        |> put_auth_header()
+        |> patch("/api/auth/profile", %{name: "Test User"})
+
+      assert json_response(conn, conn.status)
+      assert conn.status in [200, 401, 422, 500, 502]
+    end
+  end
+
+  describe "POST /api/auth/profile/change-password" do
+    setup :setup_auth
+
+    test "returns 401 without auth", %{conn: conn} do
+      conn = post(conn, "/api/auth/profile/change-password", %{})
+      assert json_response(conn, 401)
+    end
+
+    test "proxies to auth service with valid token", %{conn: conn} do
+      conn =
+        conn
+        |> put_auth_header()
+        |> post("/api/auth/profile/change-password", %{
+          current_password: "old_password",
+          new_password: "new_password123"
+        })
+
+      assert json_response(conn, conn.status)
+      assert conn.status in [200, 400, 401, 422, 500, 502]
+    end
+  end
+
+  describe "GET /api/auth/totp/status" do
+    setup :setup_auth
+
+    test "returns 401 without auth", %{conn: conn} do
+      conn = get(conn, "/api/auth/totp/status")
+      assert json_response(conn, 401)
+    end
+
+    test "proxies to auth service with valid token", %{conn: conn} do
+      conn =
+        conn
+        |> put_auth_header()
         |> get("/api/auth/totp/status")
 
       assert json_response(conn, conn.status)
@@ -100,10 +176,17 @@ defmodule SertantaiHubWeb.AuthProxyControllerTest do
   end
 
   describe "POST /api/auth/totp/setup" do
-    test "proxies to auth service and returns JSON", %{conn: conn} do
+    setup :setup_auth
+
+    test "returns 401 without auth", %{conn: conn} do
+      conn = post(conn, "/api/auth/totp/setup")
+      assert json_response(conn, 401)
+    end
+
+    test "proxies to auth service with valid token", %{conn: conn} do
       conn =
         conn
-        |> put_req_header("authorization", "Bearer fake-token")
+        |> put_auth_header()
         |> post("/api/auth/totp/setup")
 
       assert json_response(conn, conn.status)
@@ -112,10 +195,21 @@ defmodule SertantaiHubWeb.AuthProxyControllerTest do
   end
 
   describe "POST /api/auth/totp/enable" do
-    test "proxies to auth service and returns JSON", %{conn: conn} do
+    setup :setup_auth
+
+    test "returns 401 without auth", %{conn: conn} do
       conn =
         conn
-        |> put_req_header("authorization", "Bearer fake-token")
+        |> put_req_header("content-type", "application/json")
+        |> post("/api/auth/totp/enable", %{code: "000000"})
+
+      assert json_response(conn, 401)
+    end
+
+    test "proxies to auth service with valid token", %{conn: conn} do
+      conn =
+        conn
+        |> put_auth_header()
         |> put_req_header("content-type", "application/json")
         |> post("/api/auth/totp/enable", %{code: "000000"})
 
@@ -125,10 +219,21 @@ defmodule SertantaiHubWeb.AuthProxyControllerTest do
   end
 
   describe "POST /api/auth/totp/disable" do
-    test "proxies to auth service and returns JSON", %{conn: conn} do
+    setup :setup_auth
+
+    test "returns 401 without auth", %{conn: conn} do
       conn =
         conn
-        |> put_req_header("authorization", "Bearer fake-token")
+        |> put_req_header("content-type", "application/json")
+        |> post("/api/auth/totp/disable", %{code: "000000"})
+
+      assert json_response(conn, 401)
+    end
+
+    test "proxies to auth service with valid token", %{conn: conn} do
+      conn =
+        conn
+        |> put_auth_header()
         |> put_req_header("content-type", "application/json")
         |> post("/api/auth/totp/disable", %{code: "000000"})
 
@@ -136,6 +241,10 @@ defmodule SertantaiHubWeb.AuthProxyControllerTest do
       assert conn.status in [200, 400, 401, 500, 502]
     end
   end
+
+  # ──────────────────────────────────────────────────────────────────
+  # Public endpoints — no JWT required (used during login flow)
+  # ──────────────────────────────────────────────────────────────────
 
   describe "POST /api/auth/totp/challenge" do
     test "proxies to auth service and returns JSON", %{conn: conn} do

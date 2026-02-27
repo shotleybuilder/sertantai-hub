@@ -48,12 +48,19 @@ if ! docker images --format "{{.Repository}}:{{.Tag}}" | grep -q "^${FULL_IMAGE}
 fi
 
 # Ensure logged in to GHCR
+# Uses a temporary config dir to bypass Docker Desktop's credential store (GPG passphrase prompt)
+DOCKER_CONFIG_FLAG=""
+TEMP_DOCKER_CONFIG=""
+
 echo -e "${BLUE}Checking GHCR authentication...${NC}"
 if [ -n "$GHCR_TOKEN" ]; then
     GHCR_USER="${GHCR_USER:-shotleybuilder}"
-    echo "$GHCR_TOKEN" | docker login ghcr.io -u "$GHCR_USER" --password-stdin > /dev/null 2>&1
+    TEMP_DOCKER_CONFIG=$(mktemp -d)
+    trap 'rm -rf "$TEMP_DOCKER_CONFIG"' EXIT
+    echo "$GHCR_TOKEN" | docker --config "$TEMP_DOCKER_CONFIG" login ghcr.io -u "$GHCR_USER" --password-stdin > /dev/null 2>&1
     if [ $? -eq 0 ]; then
         echo -e "${GREEN}✓ Logged in to GHCR as ${GHCR_USER}${NC}"
+        DOCKER_CONFIG_FLAG="--config $TEMP_DOCKER_CONFIG"
     else
         echo -e "${RED}✗ GHCR login failed (check GHCR_TOKEN)${NC}"
         exit 1
@@ -70,7 +77,7 @@ echo ""
 echo -e "${BLUE}Pushing to GitHub Container Registry...${NC}"
 echo ""
 
-docker push "${FULL_IMAGE}"
+docker ${DOCKER_CONFIG_FLAG} push "${FULL_IMAGE}"
 
 # Check push success
 if [ $? -eq 0 ]; then
