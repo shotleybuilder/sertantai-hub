@@ -33,7 +33,12 @@
 			const timeout = setTimeout(() => controller.abort(), 3000);
 			const res = await fetch(healthUrl, { signal: controller.signal });
 			clearTimeout(timeout);
-			status = res.ok ? 'online' : 'offline';
+			if (!res.ok) {
+				status = 'offline';
+			} else {
+				const data = await res.json();
+				status = data.status === 'ok' || data.status === 'healthy' ? 'online' : 'offline';
+			}
 		} catch {
 			status = 'offline';
 		}
