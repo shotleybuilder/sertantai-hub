@@ -13,6 +13,7 @@ const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:4006';
 export interface AuthUser {
 	id: string;
 	email: string;
+	name: string | null;
 }
 
 export interface AuthState {
@@ -36,12 +37,7 @@ export const authStore = writable<AuthState>(initialState);
 /**
  * Set auth state from a token + auth service response.
  */
-function setAuth(
-	token: string,
-	user: { id: string; email: string },
-	organizationId: string,
-	role: string
-) {
+function setAuth(token: string, user: AuthUser, organizationId: string, role: string) {
 	localStorage.setItem(STORAGE_KEY, token);
 	authStore.set({
 		token,
@@ -80,7 +76,7 @@ export async function register(
 
 		setAuth(
 			data.token,
-			{ id: data.user.id, email: data.user.email },
+			{ id: data.user.id, email: data.user.email, name: data.user.name || null },
 			data.organization_id,
 			data.role
 		);
@@ -127,7 +123,7 @@ export async function login(email: string, password: string): Promise<LoginResul
 
 		setAuth(
 			data.token,
-			{ id: data.user.id, email: data.user.email },
+			{ id: data.user.id, email: data.user.email, name: data.user.name || null },
 			data.organization_id,
 			data.role
 		);
@@ -159,7 +155,7 @@ export async function completeTotpChallenge(
 
 		setAuth(
 			data.token,
-			{ id: data.user.id, email: data.user.email },
+			{ id: data.user.id, email: data.user.email, name: data.user.name || null },
 			data.organization_id,
 			data.role
 		);
@@ -191,7 +187,7 @@ export async function completeTotpRecovery(
 
 		setAuth(
 			data.token,
-			{ id: data.user.id, email: data.user.email },
+			{ id: data.user.id, email: data.user.email, name: data.user.name || null },
 			data.organization_id,
 			data.role
 		);
@@ -242,7 +238,7 @@ export async function refresh(): Promise<boolean> {
 		const data = await response.json();
 		setAuth(
 			data.token,
-			{ id: data.user.id, email: data.user.email },
+			{ id: data.user.id, email: data.user.email, name: data.user.name || null },
 			data.organization_id,
 			data.role
 		);
@@ -295,7 +291,7 @@ export async function completeMagicLink(token: string): Promise<{ ok: boolean; e
 
 		setAuth(
 			data.token,
-			{ id: data.user.id, email: data.user.email },
+			{ id: data.user.id, email: data.user.email, name: data.user.name || null },
 			data.organization_id,
 			data.role
 		);
@@ -359,7 +355,7 @@ export async function initialize(): Promise<void> {
 
 	authStore.set({
 		token,
-		user: { id: payload.sub, email: payload.email || '' },
+		user: { id: payload.sub, email: payload.email || '', name: payload.name || null },
 		organizationId: payload.org_id || payload.organization_id || null,
 		role: payload.role || null,
 		isAuthenticated: true

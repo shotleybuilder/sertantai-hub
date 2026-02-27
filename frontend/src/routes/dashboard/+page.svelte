@@ -208,12 +208,10 @@
 			</a>
 
 			<!-- Profile -->
-			<div class="relative bg-white rounded-lg shadow p-5 opacity-75">
-				<span
-					class="absolute top-3 right-3 inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-600"
-				>
-					Coming Soon
-				</span>
+			<a
+				href="/settings/profile"
+				class="bg-white rounded-lg shadow p-5 hover:shadow-md transition-all duration-200 block"
+			>
 				<div class="flex items-start gap-3">
 					<svg
 						class="w-6 h-6 text-blue-500 mt-0.5 shrink-0"
@@ -234,7 +232,7 @@
 						<p class="text-xs text-gray-400 mt-2">{$authStore.user?.email}</p>
 					</div>
 				</div>
-			</div>
+			</a>
 
 			<!-- Organization -->
 			<div class="relative bg-white rounded-lg shadow p-5 opacity-75">
