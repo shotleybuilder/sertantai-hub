@@ -9,6 +9,7 @@ export interface JwtPayload {
 	name?: string;
 	org_id?: string;
 	organization_id?: string;
+	org_name?: string;
 	role?: string;
 	exp: number;
 	iat?: number;

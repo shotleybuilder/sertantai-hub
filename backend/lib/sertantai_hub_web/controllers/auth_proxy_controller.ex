@@ -71,6 +71,14 @@ defmodule SertantaiHubWeb.AuthProxyController do
     proxy_post(conn, "/api/profile/change-password", params, auth_header(conn))
   end
 
+  def organization_show(conn, _params) do
+    proxy_get(conn, "/api/organization", auth_header(conn))
+  end
+
+  def organization_update(conn, params) do
+    proxy_patch(conn, "/api/organization", params, auth_header(conn))
+  end
+
   defp proxy_get(conn, path, headers) do
     url = auth_url() <> path
 

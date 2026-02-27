@@ -66,6 +66,10 @@ defmodule SertantaiHubWeb.Router do
     patch("/profile", AuthProxyController, :profile_update)
     post("/profile/change-password", AuthProxyController, :change_password)
 
+    # Organization management
+    get("/organization", AuthProxyController, :organization_show)
+    patch("/organization", AuthProxyController, :organization_update)
+
     # TOTP 2FA management
     get("/totp/status", AuthProxyController, :totp_status)
     post("/totp/setup", AuthProxyController, :totp_setup)

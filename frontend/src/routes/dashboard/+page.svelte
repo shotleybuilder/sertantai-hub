@@ -35,9 +35,13 @@
 				{#if $authStore.organizationId}
 					<div class="flex justify-between">
 						<span class="text-sm text-gray-500">Organization</span>
-						<span class="text-sm font-mono text-gray-600"
-							>{$authStore.organizationId.slice(0, 8)}...</span
-						>
+						{#if $authStore.organizationName}
+							<span class="text-sm font-medium text-gray-900">{$authStore.organizationName}</span>
+						{:else}
+							<span class="text-sm font-mono text-gray-600"
+								>{$authStore.organizationId.slice(0, 8)}...</span
+							>
+						{/if}
 					</div>
 				{/if}
 			</div>
@@ -235,12 +239,10 @@
 			</a>
 
 			<!-- Organization -->
-			<div class="relative bg-white rounded-lg shadow p-5 opacity-75">
-				<span
-					class="absolute top-3 right-3 inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-600"
-				>
-					Coming Soon
-				</span>
+			<a
+				href="/settings/organization"
+				class="bg-white rounded-lg shadow p-5 hover:shadow-md transition-all duration-200 block"
+			>
 				<div class="flex items-start gap-3">
 					<svg
 						class="w-6 h-6 text-blue-500 mt-0.5 shrink-0"
@@ -258,14 +260,16 @@
 					<div>
 						<h3 class="font-medium text-gray-900">Organization</h3>
 						<p class="text-sm text-gray-500 mt-1">Manage organization settings</p>
-						{#if $authStore.organizationId}
+						{#if $authStore.organizationName}
+							<p class="text-xs text-gray-400 mt-2">{$authStore.organizationName}</p>
+						{:else if $authStore.organizationId}
 							<p class="text-xs text-gray-400 mt-2 font-mono">
 								{$authStore.organizationId.slice(0, 8)}...
 							</p>
 						{/if}
 					</div>
 				</div>
-			</div>
+			</a>
 
 			<!-- Subscription & Billing -->
 			<div class="relative bg-white rounded-lg shadow p-5 opacity-75">

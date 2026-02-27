@@ -20,6 +20,7 @@ export interface AuthState {
 	token: string | null;
 	user: AuthUser | null;
 	organizationId: string | null;
+	organizationName: string | null;
 	role: string | null;
 	isAuthenticated: boolean;
 }
@@ -28,6 +29,7 @@ const initialState: AuthState = {
 	token: null,
 	user: null,
 	organizationId: null,
+	organizationName: null,
 	role: null,
 	isAuthenticated: false
 };
@@ -39,10 +41,12 @@ export const authStore = writable<AuthState>(initialState);
  */
 function setAuth(token: string, user: AuthUser, organizationId: string, role: string) {
 	localStorage.setItem(STORAGE_KEY, token);
+	const payload = decodePayload(token);
 	authStore.set({
 		token,
 		user,
 		organizationId,
+		organizationName: payload?.org_name || null,
 		role,
 		isAuthenticated: true
 	});
@@ -357,6 +361,7 @@ export async function initialize(): Promise<void> {
 		token,
 		user: { id: payload.sub, email: payload.email || '', name: payload.name || null },
 		organizationId: payload.org_id || payload.organization_id || null,
+		organizationName: payload.org_name || null,
 		role: payload.role || null,
 		isAuthenticated: true
 	});
