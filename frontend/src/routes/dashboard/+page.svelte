@@ -23,6 +23,7 @@
 		<h2 class="text-lg font-semibold text-gray-900 mb-4">Services</h2>
 		<div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-12">
 			<ServiceTile
+				token={$authStore.token}
 				name="Legal"
 				description="UK legal registers"
 				url="{LEGAL_URL}/browse"
@@ -30,6 +31,7 @@
 				tier={subscriptions.legal}
 			/>
 			<ServiceTile
+				token={$authStore.token}
 				name="Enforcement"
 				description="Regulatory enforcement data"
 				url={ENFORCEMENT_URL}
@@ -37,6 +39,7 @@
 				tier={subscriptions.enforcement}
 			/>
 			<ServiceTile
+				token={$authStore.token}
 				name="Controls"
 				description="Compliance management tools"
 				url={CONTROLS_URL}

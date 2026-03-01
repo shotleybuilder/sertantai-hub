@@ -6,6 +6,21 @@
 	export let url: string;
 	export let healthUrl: string;
 	export let tier: 'blanket_bog' | 'flower_meadow' | 'atlantic_rainforest' = 'blanket_bog';
+	export let token: string | null = null;
+
+	/**
+	 * Build the navigation URL. When a token is available, route through the
+	 * service's /auth/callback so it can store the JWT in its own localStorage.
+	 * The dest param tells the callback where to redirect after storing.
+	 */
+	$: href = (() => {
+		if (!token) return url;
+		const dest = new URL(url);
+		const callback = new URL('/auth/callback', dest.origin);
+		callback.searchParams.set('token', token);
+		callback.searchParams.set('dest', dest.pathname);
+		return callback.toString();
+	})();
 
 	type HealthStatus = 'checking' | 'online' | 'offline';
 	let status: HealthStatus = 'checking';
@@ -58,7 +73,7 @@
 </script>
 
 <a
-	href={url}
+	{href}
 	class="bg-white rounded-lg shadow p-4 border-l-4 border-blue-500 hover:shadow-md hover:bg-blue-50/50 transition-all duration-200 block"
 >
 	<div class="flex items-center justify-between mb-1">
