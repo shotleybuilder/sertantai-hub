@@ -24,7 +24,7 @@
 	onMount(async () => {
 		const result = await totpStatus();
 		if (result.ok && result.data) {
-			totpEnabled = result.data.enabled;
+			totpEnabled = result.data.totp_enabled;
 		}
 		step = 'status';
 	});

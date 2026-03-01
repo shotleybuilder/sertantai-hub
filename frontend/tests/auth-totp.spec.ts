@@ -149,9 +149,7 @@ test.describe.serial('TOTP Setup & Management', () => {
 		await expect(page.getByText('Enabled', { exact: true })).toBeVisible();
 	});
 
-	// Blocked by: https://github.com/shotleybuilder/sertantai-auth/issues/15
-	// TOTP status API returns enabled:false for users seeded with totp:true
-	test.skip('disable TOTP from security settings', async ({ page, createUser }) => {
+	test('disable TOTP from security settings', async ({ page, createUser }) => {
 		const user = await createUser({ totp: true });
 
 		// Login with TOTP
@@ -202,9 +200,7 @@ test.describe.serial('TOTP Setup & Management', () => {
 		await expect(page.getByRole('button', { name: 'Enable 2FA' })).toBeVisible();
 	});
 
-	// Blocked by: https://github.com/shotleybuilder/sertantai-auth/issues/15
-	// TOTP status API returns enabled:false for users seeded with totp:true
-	test.skip('cancel TOTP disable returns to status view', async ({ page, createUser }) => {
+	test('cancel TOTP disable returns to status view', async ({ page, createUser }) => {
 		const user = await createUser({ totp: true });
 
 		// Login with TOTP

@@ -6,8 +6,9 @@
 import { apiFetch } from './client';
 
 export interface TotpStatusResponse {
-	status: string;
-	enabled: boolean;
+	totp_enabled: boolean;
+	enabled_at: string | null;
+	backup_codes_remaining: number;
 }
 
 export interface TotpSetupResponse {

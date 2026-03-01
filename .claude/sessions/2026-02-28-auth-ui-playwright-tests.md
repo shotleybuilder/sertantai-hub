@@ -109,13 +109,20 @@ Returns `user_id`, `email`, `org_id`, `token`, `password`, `totp_secret`, `backu
 - `otpauth` npm dev dep — TOTP code generation from base32 secrets
 
 ## Results
-- **32 passed, 2 skipped, 0 failed** (20.2s)
-- Commit: `a2ccb2c` — pushed to `main`
-- Skipped tests: TOTP disable + cancel-disable (seeded TOTP state not reflected by `/api/totp/status`)
-- Bug filed: [shotleybuilder/sertantai-auth#15](https://github.com/shotleybuilder/sertantai-auth/issues/15)
+- **32 passed, 2 skipped, 0 failed** (~21s with 4 parallel workers)
+- Commits: `a2ccb2c` (initial), `a65b00b` (fix parallel worker race conditions)
+- Skipped tests: TOTP disable + cancel-disable (auth bug [#15](https://github.com/shotleybuilder/sertantai-auth/issues/15))
+
+### Key fixes (a65b00b)
+- Removed global `resetTestData` from `beforeEach` — auth service always clears ALL emails on reset, causing cross-worker interference
+- Replaced fixture cleanup with per-user `clearEmails(email)` instead of `resetTestData`
+- TOTP Setup tests use `test.describe.serial` to prevent auth state races
+- Client-side navigation (click Settings link) instead of `page.goto` for authenticated pages
+- Magic link test clears user-specific emails before requesting to avoid picking up seed confirmation email
 
 ## Notes
 - Auth UI lives in this project (sertantai-hub frontend)
 - Auth backend is a separate service (sertantai-auth) - backend only
 - Production bug: real test users cannot register — high priority to cover with tests
-- Run tests: `run-e2e` (requires `sert-hub-start --docker --auth` first)
+- Run tests: `scripts/development/run-e2e` (checks services are running first)
+- Auth service `/dev/test/reset` always clears ALL emails regardless of params — avoid calling during parallel tests
