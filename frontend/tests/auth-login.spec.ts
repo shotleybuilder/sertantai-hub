@@ -1,11 +1,7 @@
 import { test, expect } from './helpers/fixtures';
-import { uniqueEmail, resetTestData } from './helpers/auth-test-utils';
+import { uniqueEmail } from './helpers/auth-test-utils';
 
 test.describe('Login', () => {
-	test.beforeEach(async () => {
-		await resetTestData({ clear_emails: true, clear_rate_limiter: true });
-	});
-
 	test('successful login redirects to dashboard', async ({ page, createUser }) => {
 		const user = await createUser();
 

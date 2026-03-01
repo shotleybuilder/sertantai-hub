@@ -1,11 +1,7 @@
 import { test, expect } from './helpers/fixtures';
-import { uniqueEmail, resetTestData, seedUser } from './helpers/auth-test-utils';
+import { uniqueEmail } from './helpers/auth-test-utils';
 
 test.describe('Registration', () => {
-	test.beforeEach(async () => {
-		await resetTestData({ clear_emails: true, clear_rate_limiter: true });
-	});
-
 	test('successful registration redirects to dashboard', async ({ page }) => {
 		const email = uniqueEmail('reg');
 		await page.goto('/register');
@@ -17,9 +13,6 @@ test.describe('Registration', () => {
 
 		await page.waitForURL('/dashboard');
 		expect(page.url()).toContain('/dashboard');
-
-		// Cleanup
-		await resetTestData({ delete_users_matching: email });
 	});
 
 	test('registration stores token in localStorage', async ({ page }) => {
@@ -34,8 +27,6 @@ test.describe('Registration', () => {
 		await page.waitForURL('/dashboard');
 		const token = await page.evaluate(() => localStorage.getItem('sertantai_token'));
 		expect(token).toBeTruthy();
-
-		await resetTestData({ delete_users_matching: email });
 	});
 
 	test('shows error when email is missing', async ({ page }) => {
@@ -86,19 +77,16 @@ test.describe('Registration', () => {
 		await expect(page.getByText('Passwords do not match')).toBeVisible();
 	});
 
-	test('shows error for duplicate email', async ({ page }) => {
-		const email = uniqueEmail('dup');
-		await seedUser({ email, password: 'SecurePass123!' });
+	test('shows error for duplicate email', async ({ page, createUser }) => {
+		const user = await createUser();
 
 		await page.goto('/register');
-		await page.getByLabel('Email').fill(email);
+		await page.getByLabel('Email').fill(user.email);
 		await page.getByLabel('Password', { exact: true }).fill('SecurePass123!');
 		await page.getByLabel('Confirm Password').fill('SecurePass123!');
 		await page.getByRole('button', { name: 'Create Account' }).click();
 
 		await expect(page.locator('.text-red-600')).toBeVisible();
-
-		await resetTestData({ delete_users_matching: email });
 	});
 
 	test('has link to sign in page', async ({ page }) => {

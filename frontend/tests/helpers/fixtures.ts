@@ -4,7 +4,7 @@
  * and convenient helper access.
  */
 import { test as base, type Page } from '@playwright/test';
-import { resetTestData, seedUser, type SeedUserOptions, type SeededUser } from './auth-test-utils';
+import { clearEmails, seedUser, type SeedUserOptions, type SeededUser } from './auth-test-utils';
 
 type AuthFixtures = {
 	/** Seed a user and return their details. Cleans up test data after each test. */
@@ -25,9 +25,9 @@ export const test = base.extend<AuthFixtures>({
 
 		await use(fn);
 
-		// Cleanup: delete seeded users by email pattern
+		// Cleanup: clear emails for seeded users (avoid global resetTestData which wipes all emails)
 		for (const user of users) {
-			await resetTestData({ delete_users_matching: user.email }).catch(() => {});
+			await clearEmails(user.email).catch(() => {});
 		}
 	},
 

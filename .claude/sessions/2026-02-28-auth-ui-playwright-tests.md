@@ -108,7 +108,14 @@ Returns `user_id`, `email`, `org_id`, `token`, `password`, `totp_secret`, `backu
 - `frontend/tests/helpers/fixtures.ts` — Playwright fixtures: `createUser` (with auto-cleanup), `loginAsUser` (seeds + logs in via UI)
 - `otpauth` npm dev dep — TOTP code generation from base32 secrets
 
+## Results
+- **32 passed, 2 skipped, 0 failed** (20.2s)
+- Commit: `a2ccb2c` — pushed to `main`
+- Skipped tests: TOTP disable + cancel-disable (seeded TOTP state not reflected by `/api/totp/status`)
+- Bug filed: [shotleybuilder/sertantai-auth#15](https://github.com/shotleybuilder/sertantai-auth/issues/15)
+
 ## Notes
 - Auth UI lives in this project (sertantai-hub frontend)
 - Auth backend is a separate service (sertantai-auth) - backend only
 - Production bug: real test users cannot register — high priority to cover with tests
+- Run tests: `run-e2e` (requires `sert-hub-start --docker --auth` first)

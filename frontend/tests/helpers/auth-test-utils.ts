@@ -108,10 +108,11 @@ export async function getEmails(email: string): Promise<TestEmail[]> {
 /**
  * Clear all stored test emails.
  */
-export async function clearEmails(): Promise<void> {
-	const response = await fetch(`${AUTH_URL}/dev/test/emails`, {
-		method: 'DELETE'
-	});
+export async function clearEmails(email?: string): Promise<void> {
+	const url = email
+		? `${AUTH_URL}/dev/test/emails?to=${encodeURIComponent(email)}`
+		: `${AUTH_URL}/dev/test/emails`;
+	const response = await fetch(url, { method: 'DELETE' });
 
 	if (!response.ok) {
 		const body = await response.text();

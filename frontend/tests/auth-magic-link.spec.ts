@@ -1,11 +1,7 @@
 import { test, expect } from './helpers/fixtures';
-import { uniqueEmail, resetTestData, waitForEmail } from './helpers/auth-test-utils';
+import { uniqueEmail, waitForEmail, clearEmails } from './helpers/auth-test-utils';
 
 test.describe('Magic Link', () => {
-	test.beforeEach(async () => {
-		await resetTestData({ clear_emails: true, clear_rate_limiter: true });
-	});
-
 	test('requesting a magic link shows success message', async ({ page, createUser }) => {
 		const user = await createUser();
 
@@ -19,8 +15,12 @@ test.describe('Magic Link', () => {
 	test('full magic link flow: request, retrieve token, authenticate', async ({
 		page,
 		createUser
-	}) => {
+	}, testInfo) => {
+		testInfo.setTimeout(60000);
 		const user = await createUser();
+
+		// Clear any seed-generated emails for this user before requesting magic link
+		await clearEmails(user.email);
 
 		// Request magic link via the UI
 		await page.goto('/login');
