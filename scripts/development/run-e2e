@@ -1,0 +1,199 @@
+#!/bin/bash
+# Run Playwright E2E tests against the development stack
+# Ensures all required services are healthy before running tests.
+#
+# Prerequisites:
+#   sert-hub-start --docker --auth         # Start required services first
+#
+# Usage:
+#   run-e2e                                # Run all E2E tests
+#   run-e2e --headed                       # Run with visible browser
+#   run-e2e --debug                        # Run in debug mode
+#   run-e2e tests/auth-login.spec.ts       # Run a single test file
+#   run-e2e --reset-only                   # Reset test data without running tests
+#
+# Symlink Setup (to run from anywhere):
+#   sudo ln -s /home/jason/Desktop/sertantai-hub/scripts/development/run-e2e /usr/local/bin/run-e2e
+
+set -e
+
+# Help
+show_help() {
+    echo "run-e2e - Run Playwright E2E tests for sertantai-hub"
+    echo ""
+    echo "Usage: run-e2e [OPTIONS] [PLAYWRIGHT_ARGS...]"
+    echo ""
+    echo "Options:"
+    echo "  --reset-only    Reset test data without running tests"
+    echo "  -h, --help      Show this help message"
+    echo ""
+    echo "Playwright options (passed through):"
+    echo "  --headed         Run with visible browser"
+    echo "  --debug          Run in Playwright debug mode"
+    echo "  --ui             Open Playwright UI mode"
+    echo "  <file>           Run a specific test file"
+    echo ""
+    echo "Examples:"
+    echo "  run-e2e                                # All tests, headless"
+    echo "  run-e2e --headed                       # All tests, visible browser"
+    echo "  run-e2e tests/auth-login.spec.ts       # Single file"
+    echo "  run-e2e --reset-only                   # Just reset test data"
+    echo ""
+    echo "Prerequisites:"
+    echo "  Start services first:  sert-hub-start --docker --auth"
+    exit 0
+}
+
+# Parse our flags vs playwright args
+RESET_ONLY=false
+PW_ARGS=()
+
+for arg in "$@"; do
+    case $arg in
+        -h|--help)
+            show_help
+            ;;
+        --reset-only)
+            RESET_ONLY=true
+            ;;
+        *)
+            PW_ARGS+=("$arg")
+            ;;
+    esac
+done
+
+# Resolve paths
+SCRIPT_PATH="$(readlink -f "${BASH_SOURCE[0]}")"
+SCRIPT_DIR="$(dirname "$SCRIPT_PATH")"
+PROJECT_ROOT="$(cd "$SCRIPT_DIR/../.." && pwd)"
+FRONTEND_DIR="$PROJECT_ROOT/frontend"
+
+# Service ports and URLs
+AUTH_PORT=4000
+HUB_BACKEND_PORT=4006
+HUB_FRONTEND_PORT=5173
+AUTH_URL="http://localhost:$AUTH_PORT"
+HUB_BACKEND_URL="http://localhost:$HUB_BACKEND_PORT"
+HUB_FRONTEND_URL="http://localhost:$HUB_FRONTEND_PORT"
+
+# ============================================================================
+# Health check functions
+# ============================================================================
+check_auth() {
+    curl -sf -o /dev/null "$AUTH_URL/health" 2>/dev/null
+}
+
+check_hub_backend() {
+    curl -sf -o /dev/null "$HUB_BACKEND_URL/health" 2>/dev/null
+}
+
+check_hub_frontend() {
+    curl -sf -o /dev/null "$HUB_FRONTEND_URL" 2>/dev/null
+}
+
+wait_for_service() {
+    local name="$1"
+    local check_fn="$2"
+    local timeout="${3:-30}"
+    local waited=0
+
+    echo -n "  Waiting for $name..."
+    while ! $check_fn && [ $waited -lt $timeout ]; do
+        sleep 1
+        waited=$((waited + 1))
+        echo -n "."
+    done
+
+    if $check_fn; then
+        echo " ready"
+        return 0
+    else
+        echo " TIMEOUT after ${timeout}s"
+        return 1
+    fi
+}
+
+# ============================================================================
+# Step 1: Check or start services
+# ============================================================================
+echo "Checking required services..."
+echo ""
+
+SERVICES_OK=true
+
+if ! check_auth; then
+    echo "  sertantai-auth (port $AUTH_PORT): NOT RUNNING"
+    SERVICES_OK=false
+else
+    echo "  sertantai-auth (port $AUTH_PORT): ok"
+fi
+
+if ! check_hub_backend; then
+    echo "  hub-backend (port $HUB_BACKEND_PORT): NOT RUNNING"
+    SERVICES_OK=false
+else
+    echo "  hub-backend (port $HUB_BACKEND_PORT): ok"
+fi
+
+if ! check_hub_frontend; then
+    echo "  hub-frontend (port $HUB_FRONTEND_PORT): NOT RUNNING"
+    SERVICES_OK=false
+else
+    echo "  hub-frontend (port $HUB_FRONTEND_PORT): ok"
+fi
+
+echo ""
+
+if [ "$SERVICES_OK" = false ]; then
+    echo "ERROR: Required services are not running."
+    echo ""
+    echo "Start them first, then re-run:"
+    echo "  sert-hub-start --docker --auth"
+    echo "  run-e2e"
+    exit 1
+fi
+
+# ============================================================================
+# Step 2: Reset test data
+# ============================================================================
+echo "Resetting test data..."
+RESET_RESPONSE=$(curl -sf -X POST "$AUTH_URL/dev/test/reset" \
+    -H "Content-Type: application/json" \
+    -d '{"clear_emails": true, "clear_rate_limiter": true}' 2>&1) || {
+    echo "WARNING: Failed to reset test data (auth service may not support /dev/test/reset)"
+    echo "  Response: $RESET_RESPONSE"
+    echo "  Continuing anyway..."
+}
+echo "  Test data reset."
+echo ""
+
+if [ "$RESET_ONLY" = true ]; then
+    echo "Reset complete (--reset-only specified, skipping tests)."
+    exit 0
+fi
+
+# ============================================================================
+# Step 3: Run Playwright tests
+# ============================================================================
+echo "Running Playwright E2E tests..."
+echo "================================"
+echo ""
+
+cd "$FRONTEND_DIR"
+npx playwright test "${PW_ARGS[@]}"
+EXIT_CODE=$?
+
+echo ""
+if [ $EXIT_CODE -eq 0 ]; then
+    echo "All E2E tests passed."
+else
+    echo "E2E tests failed (exit code: $EXIT_CODE)"
+    echo ""
+    echo "Debug tips:"
+    echo "  View report:    cd frontend && npx playwright show-report"
+    echo "  Run headed:     run-e2e --headed"
+    echo "  Run debug:      run-e2e --debug"
+    echo "  Single file:    run-e2e tests/auth-login.spec.ts"
+fi
+
+exit $EXIT_CODE
