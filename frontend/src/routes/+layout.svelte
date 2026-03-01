@@ -14,6 +14,7 @@
 		'/register',
 		'/auth/magic-link',
 		'/auth/totp-challenge',
+		'/auth/callback',
 		'/blanket-bog',
 		'/flower-meadow',
 		'/atlantic-rainforest',

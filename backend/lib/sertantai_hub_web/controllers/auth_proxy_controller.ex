@@ -11,6 +11,14 @@ defmodule SertantaiHubWeb.AuthProxyController do
     end
   end
 
+  def github_redirect(conn, _params) do
+    redirect_url = auth_url() <> "/api/auth/user/github"
+
+    conn
+    |> put_resp_header("location", redirect_url)
+    |> send_resp(302, "")
+  end
+
   def register(conn, params) do
     proxy_post(conn, "/api/auth/user/password/register", params)
   end

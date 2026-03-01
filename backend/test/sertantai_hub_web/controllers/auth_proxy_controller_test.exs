@@ -11,6 +11,16 @@ defmodule SertantaiHubWeb.AuthProxyControllerTest do
   # Authenticated endpoints (profile, TOTP management) additionally verify
   # that requests without a valid JWT are rejected with 401.
 
+  describe "GET /api/auth/github" do
+    test "redirects to auth service GitHub OAuth endpoint", %{conn: conn} do
+      conn = get(conn, "/api/auth/github")
+
+      assert conn.status == 302
+      [location] = get_resp_header(conn, "location")
+      assert location =~ "/api/auth/user/github"
+    end
+  end
+
   describe "POST /api/auth/register" do
     test "proxies to auth service and returns JSON", %{conn: conn} do
       conn =

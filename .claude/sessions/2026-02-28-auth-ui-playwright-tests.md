@@ -109,9 +109,9 @@ Returns `user_id`, `email`, `org_id`, `token`, `password`, `totp_secret`, `backu
 - `otpauth` npm dev dep — TOTP code generation from base32 secrets
 
 ## Results
-- **32 passed, 2 skipped, 0 failed** (~21s with 4 parallel workers)
+- **34 passed, 0 skipped, 0 failed** (~21s with 4 parallel workers)
 - Commits: `a2ccb2c` (initial), `a65b00b` (fix parallel worker race conditions)
-- Skipped tests: TOTP disable + cancel-disable (auth bug [#15](https://github.com/shotleybuilder/sertantai-auth/issues/15))
+- Previously skipped TOTP disable + cancel-disable tests now passing (auth bug [#15](https://github.com/shotleybuilder/sertantai-auth/issues/15) resolved)
 
 ### Key fixes (a65b00b)
 - Removed global `resetTestData` from `beforeEach` — auth service always clears ALL emails on reset, causing cross-worker interference
@@ -126,3 +126,5 @@ Returns `user_id`, `email`, `org_id`, `token`, `password`, `totp_secret`, `backu
 - Production bug: real test users cannot register — high priority to cover with tests
 - Run tests: `scripts/development/run-e2e` (checks services are running first)
 - Auth service `/dev/test/reset` always clears ALL emails regardless of params — avoid calling during parallel tests
+
+**Ended**: 2026-03-01

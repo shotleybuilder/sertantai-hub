@@ -48,6 +48,7 @@ defmodule SertantaiHubWeb.Router do
   # Auth proxy — public endpoints (no JWT required)
   scope "/api/auth", SertantaiHubWeb do
     pipe_through(:api)
+    get("/github", AuthProxyController, :github_redirect)
     post("/register", AuthProxyController, :register)
     post("/login", AuthProxyController, :sign_in)
     post("/logout", AuthProxyController, :sign_out)
