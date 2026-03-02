@@ -1,19 +1,14 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
 	import { authStore } from '$lib/stores/auth';
-	import { getOrganization, updateOrganization } from '$lib/api/organization';
+	import { getOrganization } from '$lib/api/organization';
 	import type { Organization } from '$lib/api/organization';
 
-	type View = 'loading' | 'organization' | 'edit';
-
-	let view: View = 'loading';
+	let loading = true;
 	let org: Organization | null = null;
-	let loading = false;
 	let error = '';
-	let success = '';
 
-	// Edit state
-	let editName = '';
+	$: isAdmin = $authStore.role === 'owner' || $authStore.role === 'admin';
 
 	onMount(async () => {
 		const result = await getOrganization();
@@ -22,49 +17,8 @@
 		} else {
 			error = result.error || 'Failed to load organization';
 		}
-		view = 'organization';
-	});
-
-	function startEdit() {
-		if (!org) return;
-		editName = org.name;
-		error = '';
-		success = '';
-		view = 'edit';
-	}
-
-	async function handleSave() {
-		if (!org) return;
-		loading = true;
-		error = '';
-
-		if (editName === org.name) {
-			view = 'organization';
-			loading = false;
-			return;
-		}
-
-		const result = await updateOrganization({ name: editName });
 		loading = false;
-
-		if (result.ok && result.data) {
-			org = result.data;
-			// Update auth store with new org name
-			authStore.update((state) => ({
-				...state,
-				organizationName: result.data!.name
-			}));
-			success = 'Organization updated successfully.';
-			view = 'organization';
-		} else {
-			error = result.error || 'Failed to update organization';
-		}
-	}
-
-	function cancel() {
-		error = '';
-		view = 'organization';
-	}
+	});
 
 	function tierBadgeClass(tier: string): string {
 		switch (tier) {
@@ -84,8 +38,8 @@
 			<a href="/dashboard" class="text-sm text-blue-600 hover:text-blue-500">&larr; Dashboard</a>
 		</div>
 
-		<h1 class="text-3xl font-bold text-gray-900 mb-2">Organization Settings</h1>
-		<p class="text-gray-600 mb-8">Manage your organization name and view account details.</p>
+		<h1 class="text-3xl font-bold text-gray-900 mb-2">Organization</h1>
+		<p class="text-gray-600 mb-8">View your organization details.</p>
 
 		{#if error}
 			<div class="mb-4 p-3 bg-red-50 border border-red-200 rounded-md">
@@ -93,21 +47,12 @@
 			</div>
 		{/if}
 
-		{#if success}
-			<div class="mb-4 p-3 bg-green-50 border border-green-200 rounded-md">
-				<p class="text-sm text-green-700">{success}</p>
-			</div>
-		{/if}
-
-		<!-- Loading -->
-		{#if view === 'loading'}
+		{#if loading}
 			<div class="bg-white rounded-lg shadow-lg p-8 text-center">
 				<div class="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto"></div>
 				<p class="text-gray-500 mt-4">Loading organization...</p>
 			</div>
-
-			<!-- Organization View -->
-		{:else if view === 'organization'}
+		{:else}
 			<div class="bg-white rounded-lg shadow-lg p-8 space-y-6">
 				<div>
 					<h2 class="text-lg font-semibold text-gray-900 mb-4">Organization Information</h2>
@@ -147,53 +92,13 @@
 					</dl>
 				</div>
 
-				<div class="flex gap-3 pt-2 border-t border-gray-200">
-					<button
-						on:click={startEdit}
-						class="px-4 py-2 bg-blue-600 text-white text-sm font-medium rounded-lg
-							hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2
-							transition-colors duration-200"
-					>
-						Edit Organization
-					</button>
-				</div>
-			</div>
-
-			<!-- Edit Organization Form -->
-		{:else if view === 'edit'}
-			<div class="bg-white rounded-lg shadow-lg p-8 space-y-6">
-				<h2 class="text-lg font-semibold text-gray-900">Edit Organization</h2>
-
-				<div>
-					<label for="name" class="block text-sm font-medium text-gray-700 mb-1">Name</label>
-					<input
-						id="name"
-						type="text"
-						bind:value={editName}
-						placeholder="Organization name"
-						class="w-full rounded-md border-gray-300 shadow-sm
-							focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
-					/>
-				</div>
-
-				<div class="flex gap-3">
-					<button
-						on:click={handleSave}
-						disabled={loading}
-						class="px-4 py-2 bg-blue-600 text-white text-sm font-medium rounded-lg
-							hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2
-							disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors duration-200"
-					>
-						{loading ? 'Saving...' : 'Save Changes'}
-					</button>
-					<button
-						on:click={cancel}
-						class="px-4 py-2 text-gray-600 text-sm font-medium rounded-lg
-							hover:bg-gray-100 transition-colors duration-200"
-					>
-						Cancel
-					</button>
-				</div>
+				{#if isAdmin}
+					<div class="pt-2 border-t border-gray-200">
+						<a href="/admin/organization" class="text-sm text-blue-600 hover:text-blue-500">
+							Edit in Admin Dashboard &rarr;
+						</a>
+					</div>
+				{/if}
 			</div>
 		{/if}
 	</div>

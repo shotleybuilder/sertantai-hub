@@ -38,7 +38,7 @@
     },
     {
       "allow_nil?": false,
-      "default": "\"blanket_bog\"",
+      "default": "\"free\"",
       "generated?": false,
       "precision": null,
       "primary_key?": false,
@@ -47,6 +47,30 @@
       "size": null,
       "source": "tier",
       "type": "text"
+    },
+    {
+      "allow_nil?": true,
+      "default": "nil",
+      "generated?": false,
+      "precision": null,
+      "primary_key?": false,
+      "references": null,
+      "scale": null,
+      "size": null,
+      "source": "domain",
+      "type": "text"
+    },
+    {
+      "allow_nil?": true,
+      "default": "%{}",
+      "generated?": false,
+      "precision": null,
+      "primary_key?": false,
+      "references": null,
+      "scale": null,
+      "size": null,
+      "source": "settings",
+      "type": "map"
     },
     {
       "allow_nil?": false,
@@ -78,14 +102,14 @@
   "custom_indexes": [],
   "custom_statements": [],
   "has_create_action": false,
-  "hash": "B4A3445575DB9A25A991DDDAD6D7DD3D001C71706F45EC3F72B2288259A8D635",
+  "hash": "215CCAB6696C53CAA02DDE8D03E2898013782C4D44C1B3E534696EA4B60D7234",
   "identities": [],
   "multitenancy": {
     "attribute": null,
     "global": null,
     "strategy": null
   },
-  "repo": "Elixir.SertantaiHub.Repo",
+  "repo": "Elixir.SertantaiHub.AuthRepo",
   "schema": null,
   "table": "organizations"
 }

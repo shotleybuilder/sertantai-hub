@@ -13,17 +13,17 @@ defmodule SertantaiHub.Notifications.Changes.ValidateTierLimits do
   alias SertantaiHub.Notifications.LawChangeSubscription
 
   @tier_limits %{
-    blanket_bog: %{
+    free: %{
       max_subscriptions: 3,
       frequencies: [:daily_digest],
       delivery_methods: ["email"]
     },
-    heathland: %{
+    standard: %{
       max_subscriptions: 10,
       frequencies: [:immediate, :daily_digest, :weekly_digest],
       delivery_methods: ["email", "in_app"]
     },
-    ancient_woodland: %{
+    premium: %{
       max_subscriptions: :unlimited,
       frequencies: [:immediate, :daily_digest, :weekly_digest],
       delivery_methods: ["email", "in_app", "webhook"]
@@ -47,7 +47,7 @@ defmodule SertantaiHub.Notifications.Changes.ValidateTierLimits do
 
       case get_tier(org_id) do
         {:ok, tier} ->
-          limits = Map.get(@tier_limits, tier, @tier_limits.blanket_bog)
+          limits = Map.get(@tier_limits, tier, @tier_limits.free)
 
           if limits.max_subscriptions == :unlimited do
             changeset
@@ -80,7 +80,7 @@ defmodule SertantaiHub.Notifications.Changes.ValidateTierLimits do
     else
       case get_tier(org_id) do
         {:ok, tier} ->
-          limits = Map.get(@tier_limits, tier, @tier_limits.blanket_bog)
+          limits = Map.get(@tier_limits, tier, @tier_limits.free)
 
           if frequency in limits.frequencies do
             changeset
@@ -106,7 +106,7 @@ defmodule SertantaiHub.Notifications.Changes.ValidateTierLimits do
     else
       case get_tier(org_id) do
         {:ok, tier} ->
-          limits = Map.get(@tier_limits, tier, @tier_limits.blanket_bog)
+          limits = Map.get(@tier_limits, tier, @tier_limits.free)
           invalid = methods -- limits.delivery_methods
 
           if invalid == [] do

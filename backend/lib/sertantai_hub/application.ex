@@ -10,6 +10,7 @@ defmodule SertantaiHub.Application do
     children = [
       SertantaiHubWeb.Telemetry,
       SertantaiHub.Repo,
+      SertantaiHub.AuthRepo,
       {DNSCluster, query: Application.get_env(:sertantai_hub, :dns_cluster_query) || :ignore},
       {Phoenix.PubSub, name: SertantaiHub.PubSub},
       # JWKS client — fetches EdDSA public key from sertantai-auth for JWT verification

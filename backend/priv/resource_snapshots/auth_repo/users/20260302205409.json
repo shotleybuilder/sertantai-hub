@@ -22,7 +22,7 @@
       "scale": null,
       "size": null,
       "source": "email",
-      "type": "text"
+      "type": "citext"
     },
     {
       "allow_nil?": true,
@@ -37,7 +37,7 @@
       "type": "text"
     },
     {
-      "allow_nil?": false,
+      "allow_nil?": true,
       "default": "nil",
       "generated?": false,
       "precision": null,
@@ -69,6 +69,54 @@
     },
     {
       "allow_nil?": false,
+      "default": "\"viewer\"",
+      "generated?": false,
+      "precision": null,
+      "primary_key?": false,
+      "references": null,
+      "scale": null,
+      "size": null,
+      "source": "role",
+      "type": "text"
+    },
+    {
+      "allow_nil?": true,
+      "default": "nil",
+      "generated?": false,
+      "precision": null,
+      "primary_key?": false,
+      "references": null,
+      "scale": null,
+      "size": null,
+      "source": "killed_at",
+      "type": "utc_datetime_usec"
+    },
+    {
+      "allow_nil?": true,
+      "default": "nil",
+      "generated?": false,
+      "precision": null,
+      "primary_key?": false,
+      "references": null,
+      "scale": null,
+      "size": null,
+      "source": "github_login",
+      "type": "text"
+    },
+    {
+      "allow_nil?": true,
+      "default": "nil",
+      "generated?": false,
+      "precision": null,
+      "primary_key?": false,
+      "references": null,
+      "scale": null,
+      "size": null,
+      "source": "avatar_url",
+      "type": "text"
+    },
+    {
+      "allow_nil?": false,
       "default": "fragment(\"(now() AT TIME ZONE 'utc')\")",
       "generated?": false,
       "precision": null,
@@ -97,14 +145,14 @@
   "custom_indexes": [],
   "custom_statements": [],
   "has_create_action": false,
-  "hash": "1E4308D21C12BAE22838B374714454521D749D337817BFF085BBCB4AE2E728B5",
+  "hash": "0C5CC1957421C82EBF49FF324C7E30B0543AF58D7A80EA205BE15748F5EE2896",
   "identities": [],
   "multitenancy": {
     "attribute": null,
     "global": null,
     "strategy": null
   },
-  "repo": "Elixir.SertantaiHub.Repo",
+  "repo": "Elixir.SertantaiHub.AuthRepo",
   "schema": null,
   "table": "users"
 }

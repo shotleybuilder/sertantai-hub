@@ -2,11 +2,9 @@ defmodule SertantaiHub.NotificationHelpers do
   @moduledoc """
   Test helpers for creating notification-related test data.
 
-  Since User and Organization are read-only Ash resources, we use
-  direct SQL to insert test records.
+  Since User and Organization live in the auth database (AuthRepo),
+  we use direct SQL against AuthRepo to insert test records.
   """
-
-  alias SertantaiHub.Repo
 
   # Valid UUID v4 format IDs matching AuthHelpers defaults
   @default_org_id "00000000-0000-0000-0000-000000000001"
@@ -19,9 +17,9 @@ defmodule SertantaiHub.NotificationHelpers do
     id = Keyword.get(opts, :id, @default_org_id)
     name = Keyword.get(opts, :name, "Test Org")
     slug = Keyword.get(opts, :slug, "test-org")
-    tier = Keyword.get(opts, :tier, "blanket_bog")
+    tier = Keyword.get(opts, :tier, "free")
 
-    Repo.query!(
+    SertantaiHub.AuthRepo.query!(
       """
       INSERT INTO organizations (id, name, slug, tier, inserted_at, updated_at)
       VALUES ($1, $2, $3, $4, NOW(), NOW())
@@ -39,15 +37,16 @@ defmodule SertantaiHub.NotificationHelpers do
     email = Keyword.get(opts, :email, "test@example.com")
     name = Keyword.get(opts, :name, "Test User")
     org_id = Keyword.get(opts, :organization_id, @default_org_id)
+    role = Keyword.get(opts, :role, "viewer")
 
-    Repo.query!(
+    SertantaiHub.AuthRepo.query!(
       """
-      INSERT INTO users (id, email, name, organization_id, inserted_at, updated_at)
-      VALUES ($1, $2, $3, $4, NOW(), NOW())
+      INSERT INTO users (id, email, name, organization_id, role, inserted_at, updated_at)
+      VALUES ($1, $2, $3, $4, $5, NOW(), NOW())
       ON CONFLICT (id) DO NOTHING
       RETURNING id
       """,
-      [dump_uuid!(id), email, name, dump_uuid!(org_id)]
+      [dump_uuid!(id), email, name, dump_uuid!(org_id), role]
     )
 
     id

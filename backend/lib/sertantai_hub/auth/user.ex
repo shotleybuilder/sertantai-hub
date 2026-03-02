@@ -1,8 +1,7 @@
 defmodule SertantaiHub.Auth.User do
   @moduledoc """
-  User resource for authentication and authorization.
-  In a production setup, this would typically be synced from a centralized auth service.
-  This starter demonstrates a read-only pattern, but you can modify it to support local user management.
+  User resource — reads from the sertantai-auth database.
+  Hub is a read-only consumer; auth service owns the schema.
   """
   use Ash.Resource,
     data_layer: AshPostgres.DataLayer,
@@ -10,28 +9,36 @@ defmodule SertantaiHub.Auth.User do
 
   postgres do
     table("users")
-    repo(SertantaiHub.Repo)
+    repo(SertantaiHub.AuthRepo)
   end
 
   attributes do
     uuid_primary_key(:id)
 
-    attribute :email, :string do
+    attribute :email, :ci_string do
       allow_nil?(false)
     end
 
     attribute(:name, :string)
 
-    attribute :organization_id, :uuid do
+    attribute(:organization_id, :uuid)
+
+    attribute :role, :atom do
+      constraints(one_of: [:owner, :admin, :member, :viewer])
+      default(:viewer)
       allow_nil?(false)
     end
+
+    attribute(:killed_at, :utc_datetime_usec)
+    attribute(:github_login, :string)
+    attribute(:avatar_url, :string)
 
     create_timestamp(:inserted_at)
     update_timestamp(:updated_at)
   end
 
   relationships do
-    belongs_to :organization, SertantaiHub.Auth.Organization
+    belongs_to(:organization, SertantaiHub.Auth.Organization)
   end
 
   actions do

@@ -117,7 +117,7 @@ defmodule SertantaiHub.Notifications.LawChangeSubscriptionTest do
   end
 
   describe "tier limits" do
-    test "blanket_bog tier allows max 3 subscriptions" do
+    test "free tier allows max 3 subscriptions" do
       create_test_subscription(%{name: "Sub 1"})
       create_test_subscription(%{name: "Sub 2"})
       create_test_subscription(%{name: "Sub 3"})
@@ -132,7 +132,7 @@ defmodule SertantaiHub.Notifications.LawChangeSubscriptionTest do
                |> Ash.create()
     end
 
-    test "blanket_bog tier rejects immediate frequency" do
+    test "free tier rejects immediate frequency" do
       assert {:error, _} =
                LawChangeSubscription
                |> Ash.Changeset.for_create(:create, %{
@@ -144,7 +144,7 @@ defmodule SertantaiHub.Notifications.LawChangeSubscriptionTest do
                |> Ash.create()
     end
 
-    test "blanket_bog tier rejects in_app delivery" do
+    test "free tier rejects in_app delivery" do
       assert {:error, _} =
                LawChangeSubscription
                |> Ash.Changeset.for_create(:create, %{
@@ -156,28 +156,28 @@ defmodule SertantaiHub.Notifications.LawChangeSubscriptionTest do
                |> Ash.create()
     end
 
-    test "heathland tier allows immediate frequency" do
-      heathland_org_id = "00000000-0000-0000-0000-000000000088"
-      heathland_user_id = "00000000-0000-0000-0000-000000000089"
+    test "standard tier allows immediate frequency" do
+      standard_org_id = "00000000-0000-0000-0000-000000000088"
+      standard_user_id = "00000000-0000-0000-0000-000000000089"
 
       create_test_org(
-        id: heathland_org_id,
-        name: "Heathland Org",
-        slug: "heathland-org",
-        tier: "heathland"
+        id: standard_org_id,
+        name: "Standard Org",
+        slug: "standard-org",
+        tier: "standard"
       )
 
       create_test_user(
-        id: heathland_user_id,
-        email: "heathland@example.com",
-        organization_id: heathland_org_id
+        id: standard_user_id,
+        email: "standard@example.com",
+        organization_id: standard_org_id
       )
 
       assert {:ok, sub} =
                LawChangeSubscription
                |> Ash.Changeset.for_create(:create, %{
-                 organization_id: heathland_org_id,
-                 user_id: heathland_user_id,
+                 organization_id: standard_org_id,
+                 user_id: standard_user_id,
                  name: "Immediate Sub",
                  frequency: :immediate
                })

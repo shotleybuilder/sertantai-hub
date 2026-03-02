@@ -8,7 +8,7 @@
 import Config
 
 config :sertantai_hub,
-  ecto_repos: [SertantaiHub.Repo],
+  ecto_repos: [SertantaiHub.Repo, SertantaiHub.AuthRepo],
   ash_domains: [SertantaiHub.Api, SertantaiHub.Notifications],
   generators: [timestamp_type: :utc_datetime],
   auth_service_url: "http://localhost:4000",

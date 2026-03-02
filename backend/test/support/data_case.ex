@@ -37,7 +37,14 @@ defmodule SertantaiHub.DataCase do
   """
   def setup_sandbox(tags) do
     pid = Ecto.Adapters.SQL.Sandbox.start_owner!(SertantaiHub.Repo, shared: not tags[:async])
-    on_exit(fn -> Ecto.Adapters.SQL.Sandbox.stop_owner(pid) end)
+
+    auth_pid =
+      Ecto.Adapters.SQL.Sandbox.start_owner!(SertantaiHub.AuthRepo, shared: not tags[:async])
+
+    on_exit(fn ->
+      Ecto.Adapters.SQL.Sandbox.stop_owner(pid)
+      Ecto.Adapters.SQL.Sandbox.stop_owner(auth_pid)
+    end)
   end
 
   @doc """

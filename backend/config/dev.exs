@@ -22,6 +22,17 @@ else
     pool_size: 10
 end
 
+# Auth database — read-only connection to sertantai-auth's database
+config :sertantai_hub, SertantaiHub.AuthRepo,
+  username: "postgres",
+  password: "postgres",
+  hostname: "localhost",
+  port: 5432,
+  database: "sertantai_auth_dev",
+  stacktrace: true,
+  show_sensitive_data_on_connection_error: true,
+  pool_size: 5
+
 # For development, we disable any cache and enable
 # debugging and code reloading.
 #

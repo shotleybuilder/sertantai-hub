@@ -1,8 +1,7 @@
 defmodule SertantaiHub.Auth.Organization do
   @moduledoc """
-  Organization resource for multi-tenant data isolation.
-  In a production setup, this would typically be synced from a centralized auth service.
-  This starter demonstrates a read-only pattern, but you can modify it to support local organization management.
+  Organization resource — reads from the sertantai-auth database.
+  Hub is a read-only consumer; auth service owns the schema.
   """
   use Ash.Resource,
     data_layer: AshPostgres.DataLayer,
@@ -10,7 +9,7 @@ defmodule SertantaiHub.Auth.Organization do
 
   postgres do
     table("organizations")
-    repo(SertantaiHub.Repo)
+    repo(SertantaiHub.AuthRepo)
   end
 
   attributes do
@@ -25,9 +24,15 @@ defmodule SertantaiHub.Auth.Organization do
     end
 
     attribute :tier, :atom do
-      constraints(one_of: [:blanket_bog, :heathland, :ancient_woodland])
-      default(:blanket_bog)
+      constraints(one_of: [:free, :standard, :premium])
+      default(:free)
       allow_nil?(false)
+    end
+
+    attribute(:domain, :string)
+
+    attribute :settings, :map do
+      default(%{})
     end
 
     create_timestamp(:inserted_at)
