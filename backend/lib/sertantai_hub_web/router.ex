@@ -12,6 +12,14 @@ defmodule SertantaiHubWeb.Router do
     plug(SertantaiHubWeb.AuthPlug)
   end
 
+  # Admin API pipeline — authenticated + requires owner/admin role
+  pipeline :api_admin do
+    plug(:accepts, ["json"])
+    plug(SertantaiHubWeb.LoadFromCookie)
+    plug(SertantaiHubWeb.AuthPlug)
+    plug(SertantaiHubWeb.RequireAdminPlug)
+  end
+
   # Webhook pipeline — validates shared API key from trusted services
   pipeline :webhook_authenticated do
     plug(:accepts, ["json"])
@@ -43,6 +51,17 @@ defmodule SertantaiHubWeb.Router do
   scope "/api/webhooks", SertantaiHubWeb do
     pipe_through(:webhook_authenticated)
     post("/law-change", WebhookController, :law_change)
+  end
+
+  # Admin endpoints — requires owner/admin role (proxied to auth service)
+  scope "/api/admin", SertantaiHubWeb do
+    pipe_through(:api_admin)
+    get("/users", AuthProxyController, :admin_list_users)
+    get("/users/:id", AuthProxyController, :admin_show_user)
+    patch("/users/:id/role", AuthProxyController, :admin_change_role)
+    post("/users/:id/revoke-tokens", AuthProxyController, :admin_revoke_tokens)
+    post("/users/:id/kill", AuthProxyController, :admin_kill_user)
+    post("/users/:id/unkill", AuthProxyController, :admin_unkill_user)
   end
 
   # Auth proxy — public endpoints (no JWT required)

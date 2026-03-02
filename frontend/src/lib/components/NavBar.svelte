@@ -14,6 +14,9 @@
 			{#if $authStore.isAuthenticated}
 				<div class="flex items-center space-x-4">
 					<a href="/dashboard" class="text-sm text-gray-600 hover:text-gray-900">Dashboard</a>
+					{#if $authStore.role === 'owner' || $authStore.role === 'admin'}
+						<a href="/admin" class="text-sm text-gray-600 hover:text-gray-900">Admin</a>
+					{/if}
 					<a href="/settings/security" class="text-sm text-gray-600 hover:text-gray-900">Settings</a
 					>
 					<div class="relative">

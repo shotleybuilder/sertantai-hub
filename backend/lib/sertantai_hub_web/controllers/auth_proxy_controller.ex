@@ -87,6 +87,33 @@ defmodule SertantaiHubWeb.AuthProxyController do
     proxy_patch(conn, "/api/organization", params, auth_header(conn))
   end
 
+  # -- Admin endpoints (proxied to auth service) --
+
+  def admin_list_users(conn, _params) do
+    proxy_get(conn, "/api/admin/users", auth_header(conn))
+  end
+
+  def admin_show_user(conn, %{"id" => id}) do
+    proxy_get(conn, "/api/admin/users/#{id}", auth_header(conn))
+  end
+
+  def admin_change_role(conn, %{"id" => id} = params) do
+    body = Map.take(params, ["role"])
+    proxy_patch(conn, "/api/admin/users/#{id}/role", body, auth_header(conn))
+  end
+
+  def admin_revoke_tokens(conn, %{"id" => id}) do
+    proxy_post(conn, "/api/admin/users/#{id}/revoke-tokens", %{}, auth_header(conn))
+  end
+
+  def admin_kill_user(conn, %{"id" => id}) do
+    proxy_post(conn, "/api/admin/users/#{id}/kill", %{}, auth_header(conn))
+  end
+
+  def admin_unkill_user(conn, %{"id" => id}) do
+    proxy_post(conn, "/api/admin/users/#{id}/unkill", %{}, auth_header(conn))
+  end
+
   defp proxy_get(conn, path, headers) do
     url = auth_url() <> path
 

@@ -227,12 +227,10 @@
 
 			<!-- Team Members (owner/admin only) -->
 			{#if $authStore.role === 'owner' || $authStore.role === 'admin'}
-				<div class="relative bg-white rounded-lg shadow p-5 opacity-75">
-					<span
-						class="absolute top-3 right-3 inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-600"
-					>
-						Coming Soon
-					</span>
+				<a
+					href="/admin/users"
+					class="bg-white rounded-lg shadow p-5 hover:shadow-md transition-all duration-200 block"
+				>
 					<div class="flex items-start gap-3">
 						<svg
 							class="w-6 h-6 text-blue-500 mt-0.5 shrink-0"
@@ -249,7 +247,7 @@
 						</svg>
 						<div>
 							<h3 class="font-medium text-gray-900">Team Members</h3>
-							<p class="text-sm text-gray-500 mt-1">Invite and manage users in your organization</p>
+							<p class="text-sm text-gray-500 mt-1">Manage users in your organization</p>
 							<span
 								class="inline-flex items-center mt-2 px-2 py-0.5 rounded text-xs font-medium bg-blue-100 text-blue-800"
 							>
@@ -257,7 +255,7 @@
 							</span>
 						</div>
 					</div>
-				</div>
+				</a>
 			{/if}
 		</div>
 	</div>
