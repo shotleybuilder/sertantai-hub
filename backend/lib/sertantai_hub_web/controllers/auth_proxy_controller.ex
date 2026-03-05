@@ -4,6 +4,10 @@ defmodule SertantaiHubWeb.AuthProxyController do
   defp auth_url,
     do: Application.get_env(:sertantai_hub, :auth_service_url, "http://localhost:4000")
 
+  # Public-facing auth URL for browser redirects (not internal Docker networking)
+  defp auth_public_url,
+    do: Application.get_env(:sertantai_hub, :auth_public_url, auth_url())
+
   defp req_opts do
     case Application.get_env(:sertantai_hub, :auth_proxy_req_plug) do
       nil -> []
@@ -12,7 +16,7 @@ defmodule SertantaiHubWeb.AuthProxyController do
   end
 
   def github_redirect(conn, _params) do
-    redirect_url = auth_url() <> "/api/auth/user/github"
+    redirect_url = auth_public_url() <> "/api/auth/user/github"
 
     conn
     |> put_resp_header("location", redirect_url)

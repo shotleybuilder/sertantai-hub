@@ -89,6 +89,12 @@ if config_env() == :prod do
   config :sertantai_hub,
     auth_service_url: System.get_env("AUTH_SERVICE_URL") || "http://localhost:4000"
 
+  # Public-facing auth URL for browser redirects (GitHub OAuth etc.)
+  # AUTH_SERVICE_URL is internal (Docker networking), this is what the browser sees
+  if url = System.get_env("AUTH_PUBLIC_URL") do
+    config :sertantai_hub, auth_public_url: url
+  end
+
   # Micro-service URLs for server-side health checks
   if url = System.get_env("LEGAL_SERVICE_URL") do
     config :sertantai_hub, legal_url: url
