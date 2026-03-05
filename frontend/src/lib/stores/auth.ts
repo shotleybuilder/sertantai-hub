@@ -258,7 +258,7 @@ export async function refresh(): Promise<boolean> {
  */
 export async function requestMagicLink(email: string): Promise<{ ok: boolean; error?: string }> {
 	try {
-		const response = await fetch(`${API_URL}/api/auth/magic-link/request`, {
+		const response = await fetch(`${API_URL}/api/auth/user/magic_link/request`, {
 			method: 'POST',
 			headers: { 'Content-Type': 'application/json' },
 			body: JSON.stringify({ user: { email } })
@@ -281,7 +281,7 @@ export async function requestMagicLink(email: string): Promise<{ ok: boolean; er
  */
 export async function completeMagicLink(token: string): Promise<{ ok: boolean; error?: string }> {
 	try {
-		const response = await fetch(`${API_URL}/api/auth/magic-link/callback`, {
+		const response = await fetch(`${API_URL}/api/auth/user/magic_link`, {
 			method: 'POST',
 			headers: { 'Content-Type': 'application/json' },
 			body: JSON.stringify({ token })
