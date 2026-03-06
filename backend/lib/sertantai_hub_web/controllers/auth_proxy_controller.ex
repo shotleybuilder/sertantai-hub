@@ -32,7 +32,7 @@ defmodule SertantaiHubWeb.AuthProxyController do
   end
 
   def sign_out(conn, _params) do
-    proxy_post(conn, "/api/sign_out", %{}, auth_header(conn))
+    proxy_get(conn, "/api/sign-out", auth_header(conn))
   end
 
   def refresh(conn, params) do
