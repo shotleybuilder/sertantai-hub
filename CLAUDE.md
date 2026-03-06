@@ -336,9 +336,13 @@ stream.subscribe((messages) => {
 - ElectricSQL shapes filtered by organization
 - JWT tokens include organization claims
 
-**Authentication Pattern** (to be implemented):
-1. User logs in → Backend validates credentials
-2. Backend generates JWT with claims: `{user_id, organization_id, roles}`
+**Authentication Pattern**:
+Authentication is handled by the `sertantai-auth` service. The hub's `AuthProxyController` translates frontend-friendly routes (`/api/auth/login`) into auth service routes (`/api/auth/user/password/sign_in`).
+
+**IMPORTANT**: See the **Routing Architecture** document in the infrastructure repo (`~/Desktop/infrastructure/docs/ROUTING_ARCHITECTURE.md`) for the definitive route mapping and rules. That document is the source of truth for how traffic flows between nginx, hub, and auth.
+
+1. User logs in → Hub `AuthProxyController` proxies to auth service
+2. Auth service validates credentials, returns JWT with claims: `{sub, org_id, role, tier}`
 3. Frontend stores JWT
 4. Frontend requests ElectricSQL shapes with JWT
 5. ElectricSQL validates JWT and filters by organization_id
