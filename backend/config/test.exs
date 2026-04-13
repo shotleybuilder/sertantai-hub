@@ -19,7 +19,7 @@ config :sertantai_hub, SertantaiHub.AuthRepo,
   username: "postgres",
   password: "postgres",
   hostname: "localhost",
-  port: 5432,
+  port: 5438,
   database: "sertantai_auth_test#{System.get_env("MIX_TEST_PARTITION")}",
   pool: Ecto.Adapters.SQL.Sandbox,
   pool_size: System.schedulers_online() * 2
