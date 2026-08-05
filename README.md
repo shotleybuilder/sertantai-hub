@@ -42,7 +42,8 @@ Each service uses unique ports to allow running multiple services simultaneously
 | **hub** | 5435 | 3000 | 4006 | 5173 |
 | **enforcement** | 5434 | 3001 | 4002 | 5174 |
 | **legal** | 5436 | 3002 | 4003 | 5175 |
-| **controls** | 5437 | 3003 | 4004 | 5176 |
+| **compliance** | 5436 | 3003 | 4004 | 5176 |
+| **controls** | 5437 | 3004 | 4007 | 5177 |
 | **auth** | 5438 | — | 4000 | — |
 
 ## Tech Stack
