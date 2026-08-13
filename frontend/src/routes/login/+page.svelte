@@ -1,8 +1,7 @@
 <script lang="ts">
 	import { login, requestMagicLink } from '$lib/stores/auth';
 	import { goto } from '$app/navigation';
-
-	const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:4006';
+	import { API_URL } from '$lib/env';
 
 	let email = '';
 	let password = '';

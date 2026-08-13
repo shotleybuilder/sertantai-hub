@@ -6,9 +6,9 @@
 
 import { writable, get } from 'svelte/store';
 import { decodePayload, isExpired } from '$lib/auth/jwt';
+import { API_URL } from '$lib/env';
 
 const STORAGE_KEY = 'sertantai_token';
-const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:4006';
 
 export interface AuthUser {
 	id: string;

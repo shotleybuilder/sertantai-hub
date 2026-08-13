@@ -6,8 +6,7 @@
 
 import { get } from 'svelte/store';
 import { authStore, logout, refresh } from '$lib/stores/auth';
-
-const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:4006';
+import { API_URL } from '$lib/env';
 
 interface FetchOptions extends RequestInit {
 	skipAuth?: boolean;

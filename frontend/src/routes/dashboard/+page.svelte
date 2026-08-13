@@ -1,11 +1,7 @@
 <script lang="ts">
 	import { authStore } from '$lib/stores/auth';
 	import ServiceTile from '$lib/components/ServiceTile.svelte';
-
-	const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:4006';
-	const LEGAL_URL = import.meta.env.VITE_LEGAL_URL || 'http://localhost:5175';
-	const ENFORCEMENT_URL = import.meta.env.VITE_ENFORCEMENT_URL || 'http://localhost:5174';
-	const CONTROLS_URL = import.meta.env.VITE_CONTROLS_URL || 'http://localhost:5176';
+	import { API_URL, LEGAL_URL, ENFORCEMENT_URL, CONTROLS_URL } from '$lib/env';
 
 	// Mock subscription data — replace with real data when backend supports it
 	const subscriptions = {
