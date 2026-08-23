@@ -22,7 +22,7 @@
 				token={$authStore.token}
 				name="Legal"
 				description="UK legal registers"
-				url="{LEGAL_URL}/browse"
+				url="{LEGAL_URL}/admin"
 				healthUrl="{API_URL}/api/services/legal/health"
 				tier={subscriptions.legal}
 			/>
