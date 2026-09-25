@@ -1,11 +1,12 @@
 <script lang="ts">
 	import { authStore } from '$lib/stores/auth';
 	import ServiceTile from '$lib/components/ServiceTile.svelte';
-	import { API_URL, LEGAL_URL, ENFORCEMENT_URL, CONTROLS_URL } from '$lib/env';
+	import { API_URL, LEGAL_URL, ENFORCEMENT_URL, COMPLIANCE_URL, CONTROLS_URL } from '$lib/env';
 
 	// Mock subscription data — replace with real data when backend supports it
 	const subscriptions = {
 		legal: 'blanket_bog' as const,
+		compliance: 'blanket_bog' as const,
 		enforcement: 'blanket_bog' as const,
 		controls: 'blanket_bog' as const
 	};
@@ -17,7 +18,7 @@
 
 		<!-- Services -->
 		<h2 class="text-lg font-semibold text-gray-900 mb-4">Services</h2>
-		<div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-12">
+		<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-12">
 			<ServiceTile
 				token={$authStore.token}
 				name="Legal"
@@ -25,6 +26,14 @@
 				url="{LEGAL_URL}/admin"
 				healthUrl="{API_URL}/api/services/legal/health"
 				tier={subscriptions.legal}
+			/>
+			<ServiceTile
+				token={$authStore.token}
+				name="Compliance"
+				description="Applicable laws and legal change"
+				url="{COMPLIANCE_URL}/app/screening"
+				healthUrl="{API_URL}/api/services/compliance/health"
+				tier={subscriptions.compliance}
 			/>
 			<ServiceTile
 				token={$authStore.token}

@@ -69,6 +69,7 @@ services:
       GUARDIAN_SECRET_KEY: ${GUARDIAN_SECRET_KEY:-dev-guardian-secret}
       GUARDIAN_ISSUER: sertantai_hub
       AUTH_SERVICE_URL: http://host.docker.internal:4000
+      COMPLIANCE_SERVICE_URL: http://host.docker.internal:4004
       MIX_ENV: dev
       PORT: 4006
     ports:

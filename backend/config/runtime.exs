@@ -104,6 +104,10 @@ if config_env() == :prod do
     config :sertantai_hub, enforcement_url: url
   end
 
+  if url = System.get_env("COMPLIANCE_SERVICE_URL") do
+    config :sertantai_hub, compliance_url: url
+  end
+
   if url = System.get_env("CONTROLS_SERVICE_URL") do
     config :sertantai_hub, controls_url: url
   end

@@ -25,4 +25,6 @@ function env(key: string): string | undefined {
 export const API_URL = env('VITE_API_URL') || 'http://localhost:4006';
 export const LEGAL_URL = env('VITE_LEGAL_URL') || 'http://localhost:5175';
 export const ENFORCEMENT_URL = env('VITE_ENFORCEMENT_URL') || 'http://localhost:5174';
-export const CONTROLS_URL = env('VITE_CONTROLS_URL') || 'http://localhost:5176';
+export const COMPLIANCE_URL = env('VITE_COMPLIANCE_URL') || 'http://localhost:5176';
+// Controls moved to 5177 when compliance took 5176 (README port allocation)
+export const CONTROLS_URL = env('VITE_CONTROLS_URL') || 'http://localhost:5177';

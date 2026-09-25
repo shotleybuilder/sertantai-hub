@@ -12,7 +12,9 @@ defmodule SertantaiHubWeb.ServiceHealthController do
   @services %{
     "legal" => {:legal_url, "http://localhost:4003"},
     "enforcement" => {:enforcement_url, "http://localhost:4001"},
-    "controls" => {:controls_url, "http://localhost:4004"}
+    "compliance" => {:compliance_url, "http://localhost:4004"},
+    # Controls moved to 4007 when compliance took 4004 (README port allocation)
+    "controls" => {:controls_url, "http://localhost:4007"}
   }
 
   def show(conn, %{"service" => service}) do
